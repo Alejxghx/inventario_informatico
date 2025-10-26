@@ -1,0 +1,10 @@
+Nombre del equipo,Tipo,Ubicación,Estado,N.º de serie,Responsable,Fecha ingreso/mant.,Marca,Modelo,Valor de compra,Proveedor,Notas
+PC Docencia Lab 12,Computador,Bloque A — Lab 3,Activo,SER-PC-009812,Ana Pérez,10/09/2025,Dell,Optiplex 7090,1450.00,CompuExpress,Equipo principal de laboratorio.
+Proyector Aula Magna,Proyector,Aula Magna,En reparación,PRJ-77231,Carlos Ruiz,05/10/2025,Epson,EB-X51,730.00,Epson Ecuador,Pendiente repuesto lámpara.
+Impresora Adm. 2º piso,Impresora,Bloque B — Admin,Activo,HP-12A-5542,Diana Soto,22/08/2025,HP,LaserJet M404,890.00,OfiPro,Papel trabado resuelto.
+UPS Biblioteca,UPS,Biblioteca Central,Dado de baja,UPS-1500-AX9,Luis Cano,01/07/2025,APC,Smart-UPS 1500,560.00,ElectroDigital,Reciclado después de falla batería.
+Laptop Posgrado,Computador,Bloque C — Posgrado,Activo,LT-PGR-2025A,Marina Aguayo,03/02/2025,Lenovo,ThinkPad E14,1680.00,Lenovo Ecuador,Asignado a profesora visitante.
+Tablet Sala Docentes,Tablet,Bloque B — Sala Docentes,Activo,TB-1004-RV,Marcelo Tapia,13/06/2025,Samsung,Galaxy Tab A8,425.00,DataZone,Tablet para registro digital.
+Proyector Auditorio,Proyector,Auditorio Central,En reparación,PRJ-77412,Ana Pérez,19/09/2025,BenQ,MX808STH,810.00,CompuExpress,Problema en HDMI detectado.
+Servidor Central,Servidor,DataCenter,Activo,SRV-CNTRL-004,Ing. Gonzalo Vélez,08/01/2025,HPE,ProLiant DL380,6500.00,HPE Quito,Servidor con backup diario.
+Router Principal,Router,Oficina de IT,Activo,RT-PR-2025B,Sofía Martínez,15/03/2025,Cisco,Catalyst 9200,1200.00,Cisco Store,Configurado para red interna.    

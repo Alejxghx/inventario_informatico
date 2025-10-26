@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <!-- Metadatos -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ULEAM - Selección de Usuario</title>
+  <link rel="stylesheet" href="styles_web.css">
+</head>
+<body>
+  <!-- Barra superior: título y logo -->
+  <div class="barra_principal">
+    <h1 class="titulo-principal"><strong>Selección de Tipo de Usuario</strong></h1>
+    <img src="https://www.uleam.edu.ec/wp-content/uploads/2012/09/LOGO-ULEAM-VERTICAL.png" alt="Logo ULEAM" class="logo-uleam">
+  </div>
+
+  <!-- Subtítulo y botón informativo -->
+  <p class="subtitulo">Elige un único rol para continuar.</p>
+  <button class="btn-roles">Roles disponibles</button>
+
+  <br><br>
+
+  <!-- Contenedor principal: tarjetas de rol + resumen del rol -->
+  <div class="contenedor-roles">
+    <div class="seleccion-roles">
+      <!-- Tarjeta: Administrador (inicialmente activa) -->
+      <div class="rol-card activo">
+        <div class="icono">
+          <!-- icono representativo -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="#222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 22c5-1 8-5 8-10V5l-8-3-8 3v7c0 5 3 9 8 10z"></path></svg>
+        </div>
+        <strong>Administrador</strong>
+        <span>Acceso total al sistema, gestión de usuarios, permisos y configuración general.</span>
+      </div>
+
+      <!-- Tarjeta: Encargado de Inventario -->
+      <div class="rol-card">
+        <div class="icono">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="#222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"></path></svg>
+        </div>
+        <strong>Encargado de Inventario</strong>
+        <span>Control de existencias, entradas/salidas, órdenes de compra y reportes de inventario.</span>
+      </div>
+
+      <!-- Tarjeta: Técnico de Mantenimiento -->
+      <div class="rol-card">
+        <div class="icono">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="#222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
+        <strong>Técnico de Mantenimiento</strong>
+        <span>Gestión de órdenes de trabajo, historial y seguimiento de equipos.</span>
+      </div>
+
+      <!-- Tarjeta: Decanos, Directores y Profesores -->
+      <div class="rol-card">
+        <div class="icono">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="#222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"></path></svg>
+        </div>
+        <strong>Decanos, Directores y Profesores</strong>
+        <span>Acceso a reportes, estadísticas y gestión del inventario para decisiones estratégicas.</span>
+      </div>
+    </div>
+
+    <!-- Panel lateral con resumen del rol seleccionado -->
+    <div class="resumen-rol" id="resumen-rol">
+      <h3>Resumen del rol</h3>
+      <strong>Administrador</strong>
+      <ul>
+        <li>Gestión de usuarios y permisos</li>
+        <li>Configuración global del sistema</li>
+        <li>Acceso a reportes y auditorías</li>
+      </ul>
+      <p style='margin-top:8px'>Al confirmar, se registrará la selección de este rol para el usuario.</p>
+    </div>
+  </div>
+
+  <!-- Texto que indica el rol actualmente seleccionado -->
+  <p id="rol-seleccionado">Rol seleccionado: Administrador</p>
+
+  <!-- Botones de navegación -->
+  <div>
+    <button class="btn-rojo">Atrás</button>
+    <button class="btn-verde">Confirmar</button>
+  </div>
+
+<script>
+/* ------------------------------------------------------------
+   Script: interactividad de selección de roles y redirección
+   Comentarios humanos para facilitar lectura, sin cambiar
+   la lógica ni el comportamiento existente.
+   ------------------------------------------------------------ */
+
+/* Selección de elementos del DOM (referencias usadas por el script) */
+const roles = document.querySelectorAll('.rol-card');
+const resumenRol = document.getElementById('resumen-rol');
+const txtRolSeleccionado = document.getElementById('rol-seleccionado');
+
+/* Texto/HTML de resumen para cada rol — usado al hacer click */
+const resumenes = {
+  "Administrador": `<h3>Resumen del rol</h3><strong>Administrador</strong><ul><li>Gestión de usuarios y permisos</li><li>Configuración global del sistema</li><li>Acceso a reportes y auditorías</li></ul><p style='margin-top:8px'>Al confirmar, se registrará la selección de este rol para el usuario.</p>`,
+  "Encargado de Inventario": `<h3>Resumen del rol</h3><strong>Encargado de Inventario</strong><ul><li>Control de existencias</li><li>Entradas y salidas</li><li>Órdenes de compra y reportes</li></ul><p style='margin-top:8px'>Al confirmar, se registrará la selección de este rol para el usuario.</p>`,
+  "Técnico de Mantenimiento": `<h3>Resumen del rol</h3><strong>Técnico de Mantenimiento</strong><ul><li>Gestión de órdenes de trabajo</li><li>Historial y seguimiento de equipos</li></ul><p style='margin-top:8px'>Al confirmar, se registrará la selección de este rol para el usuario.</p>`,
+  "Decanos, Directores y Profesores": `<h3>Resumen del rol</h3><strong>Decanos, Directores y Profesores</strong><ul><li>Acceso a reportes, estadísticas</li><li>Gestión para decisiones estratégicas</li></ul><p style='margin-top:8px'>Al confirmar, se registrará la selección de este rol para el usuario.</p>`
+};
+
+/* Añadir manejadores a cada tarjeta de rol:
+   - actualiza clase 'activo'
+   - actualiza el texto visible del rol seleccionado
+   - actualiza el panel de resumen con el contenido correspondiente
+*/
+roles.forEach(rol => {
+  rol.addEventListener('click', () => {
+    roles.forEach(r => r.classList.remove('activo'));
+    rol.classList.add('activo');
+    const nombreRol = rol.querySelector('strong').textContent;
+    txtRolSeleccionado.textContent = 'Rol seleccionado: ' + nombreRol;
+    resumenRol.innerHTML = resumenes[nombreRol] || "";
+  });
+});
+
+/* ---- Redirección al login / página principal ----
+   Al confirmar, si hay una tarjeta activa, se hace location.href
+   con el nombre del rol en la query string; si no, se alerta.
+*/
+document.querySelector('.btn-verde').addEventListener('click', () => {
+  const activo = document.querySelector('.rol-card.activo');
+  if (activo) {
+    const nombre = activo.querySelector('strong').textContent.trim();
+    // usar el archivo correcto (coincidir con el nombre real: login_Web.html)
+    window.location.href = `login_Web.html?rol=${encodeURIComponent(nombre)}`;
+  } else {
+    alert("Debes seleccionar un rol.");
+  }
+});
+</script>
+
+</body>
+</html>

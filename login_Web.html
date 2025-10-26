@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <!-- Meta y título -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ingreso a rol seleccionado</title>
+
+  <!-- Enlaces a estilos -->
+  <link rel="stylesheet" href="styles_web.css">
+</head>
+<body>
+  <!-- Barra superior con logo (alineado a la derecha) -->
+  <div class="barra_principal">
+    <div></div>
+    <img src="https://www.uleam.edu.ec/wp-content/uploads/2012/09/LOGO-ULEAM-VERTICAL.png" alt="Logo ULEAM" class="logo-uleam">
+  </div>
+
+  <!-- Título principal dinámico según rol -->
+  <h1 class="titulo-principal" id="rol-titulo">Ingreso para ...</h1>
+
+  <!-- Subtítulo que muestra el nombre del rol seleccionado -->
+  <p class="subtitulo">Has seleccionado el rol <span id="rol-nombre"></span>. Ingresa tus credenciales para continuar.</p>
+
+  <!-- Contenedor principal: formulario a la izquierda, resumen del rol a la derecha -->
+  <div class="contenedor-roles" style="align-items:flex-start;">
+
+    <!-- Panel de credenciales ahora envuelto en un formulario con id="loginForm" -->
+    <form id="loginForm" style="background:#fff;border:1.5px solid #d5daea;border-radius:14px;padding:28px 24px;min-width:340px;flex:2;">
+      <h2 style="font-size:1.15em;margin-bottom:12px;">Credenciales</h2>
+
+      <!-- Campo usuario -->
+      <label for="usuario" style="color:#444;">Usuario</label><br>
+      <input type="text" id="usuario" name="usuario" placeholder="nombre.apellido" style="width:100%;padding:8px 12px;border:1px solid #d5daea;border-radius:8px;margin-bottom:14px;background:#f6f9ff;"><br>
+
+      <!-- Campo contraseña (id cambiado a "clave" para coincidir con el script) -->
+      <label for="clave" style="color:#444;">Contraseña</label><br>
+      <input type="password" id="clave" name="clave" placeholder="●●●●●●" style="width:100%;padding:8px 12px;border:1px solid #d5daea;border-radius:8px;margin-bottom:12px;background:#f6f9ff;"><br>
+
+      <!-- Mensaje de error (oculto por defecto) -->
+      <div id="error-msg" style="display:none;color:#c0392b;margin-top:8px;">Usuario o contraseña incorrectos.</div>
+
+      <!-- Botones: atrás e ingresar -->
+      <div style="display:flex;gap:14px;margin-top:12px;">
+        <button type="button" class="btn-rojo" onclick="window.location.href='Seleccion_usuario.html'">&#8592; Atrás</button>
+        <button type="submit" class="btn-verde" id="btn-ingresar">Ingresar</button>
+      </div>
+    </form>
+
+    <!-- Resumen del rol seleccionado (panel derecho) -->
+    <div class="resumen-rol" style="margin-left:0;">
+      <div style="border-radius:8px; background:#c1f5c7; padding:11px 14px; margin-bottom:10px; font-size:1em;">
+        <span style="color:#1a3434;">Rol seleccionado</span><br>
+        <strong id="rol-resumido"></strong>
+      </div>
+      <div id="rol-permisos" style="font-size:.98em;"></div>
+    </div>
+  </div>
+
+<script>
+/* ------------------------------------------------------
+   Lógica JS: lectura de rol en URL, mapeo de permisos,
+   actualización de la UI y validación básica de login.
+   No se modifica la funcionalidad existente.
+   ------------------------------------------------------*/
+
+/* Obtener el parámetro "rol" desde la URL; si no existe, usar "Administrador" */
+function getRolSeleccionado() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("rol") || "Administrador";
+}
+
+/* Definición de títulos, breve descripción y permisos por rol.
+   Mantener esta estructura facilita añadir o editar roles en el futuro. */
+const permisosRol = {
+  "Administrador": {
+    titulo: "Ingreso para Administrador",
+    breve: "Administrador",
+    permisos: `<span>Permisos:</span><ul><li>Gestión total de usuarios y permisos</li><li>Configuración global del sistema</li><li>Acceso completo a reportes y auditorías</li></ul>`
+  },
+  "Encargado de Inventario": {
+    titulo: "Ingreso para Encargado de Inventario",
+    breve: "Encargado de Inventario",
+    permisos: `<span>Permisos:</span><ul><li>Registro de entradas/salidas</li><li>Órdenes de compra</li><li>Generar reportes de inventario</li></ul>`
+  },
+  "Técnico de Mantenimiento": {
+    titulo: "Ingreso para Técnico de Mantenimiento",
+    breve: "Técnico de Mantenimiento",
+    permisos: `<span>Permisos:</span><ul><li>Gestión de órdenes de trabajo</li><li>Historial de equipos</li></ul>`
+  },
+  "Decanos, Directores y Profesores": {
+    titulo: "Ingreso para Decanos, Directores y Profesores",
+    breve: "Decanos, Directores y Profesores",
+    permisos: `<span>Permisos:</span><ul><li>Reportes y estadísticas</li><li>Gestión estratégica de inventario</li></ul>`
+  }
+};
+
+/* Actualizar textos en la interfaz según el rol seleccionado.
+   Se usa el operador de acceso seguro para evitar errores si el rol no existe. */
+const rol = (new URLSearchParams(window.location.search)).get("rol") || "Administrador";
+document.getElementById("rol-titulo").textContent = permisosRol[rol]?.titulo || rol;
+document.getElementById("rol-nombre").textContent = permisosRol[rol]?.breve || rol;
+document.getElementById("rol-resumido").textContent = permisosRol[rol]?.breve || rol;
+document.getElementById("rol-permisos").innerHTML = permisosRol[rol]?.permisos || "";
+
+/* Validación sencilla de login: guarda sesión y almacena el rol del usuario.
+   El rol se obtiene desde la query string (selección previa). */
+document.getElementById('loginForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const usuario = document.getElementById('usuario').value.trim();
+  const clave = document.getElementById('clave').value.trim();
+
+  // credenciales de ejemplo (mantener como estaba)
+  if (usuario === 'admin' && clave === '1234') {
+    // marca sesión válida
+    sessionStorage.setItem('accesoInventario', 'ok');
+    // guarda rol seleccionado para usar en las vistas
+    sessionStorage.setItem('rolUsuario', rol);
+    // redirige a la vista principal (cada vista hará su comprobación de rol)
+    window.location.href = 'vista_inventario.html';
+  } else {
+    document.getElementById('error-msg').style.display = 'block';
+  }
+});
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

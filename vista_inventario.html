@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Inventario General - ULEAM</title>
+  <link rel="stylesheet" href="styles_web.css">
+  <style>
+    /* Extra (puedes poner en tu CSS global si prefieres) */
+    .filtros-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+    .filtros-bar input, .filtros-bar select { border: 1.5px solid #d5daea; border-radius: 8px; padding: 7px 10px; background: #f6f9ff; font-size: 1em;}
+    .filtros-bar button, .btn-blue {
+      background: #3477f7; color: #fff; border-radius:8px;border:none;padding:7px 16px;font-weight:600;cursor:pointer
+    }
+    .filtros-bar button:hover, .btn-blue:hover { background: #2456a7;}
+    .tabla-inventario th, .tabla-inventario td { padding:9px 12px;text-align:left; }
+    .avatar-small {width:28px;height:28px;border-radius:50%;object-fit:cover;vertical-align:middle;}
+    .badge-gris{background:#dbe7ed;color:#232b39;padding:4px 12px;border-radius:13px;font-weight:600;font-size:.97em;}
+    .badge-blue{background:#e8eefd;color:#3365b8;padding:4px 12px;border-radius:13px;font-weight:600;}
+    .badge-repar{background:#fff1db;color:#d08c2c;padding:4px 12px;border-radius:13px;font-weight:600;}
+    .badge-baja{background:#fdeceb;color:#e34343;padding:4px 12px;border-radius:13px;font-weight:600;}
+    .form-cont {background:#fff;border-radius:13px;box-shadow:0 2px 18px #edf2f7;height:auto;padding:18px 22px;margin:22px 0;}
+    .form-inline {display: flex;gap:15px;flex-wrap: wrap;}
+    .form-inline label{font-weight:500; margin-bottom:2px;display:block;}
+    .form-inline input, .form-inline select {border: 1.1px solid #d5daea; border-radius: 7px; padding:7px 9px;background:#f5fafe; font-size:1em;width:95%;}
+    .form-actions {margin-top:12px;display:flex;gap:12px;}
+    .btn-verde {background: #47b562;}
+    .btn-rojo {background: #d83919;}
+    .titulo-seccion {font-size:1.2em;font-weight:600;margin-bottom:9px;}
+    /* Responsive */
+    @media(max-width:800px){.form-inline{flex-direction:column;}.filtros-bar{flex-direction:column;}}
+  </style>
+</head>
+<body>
+  <!-- Barra principal -->
+  <div class="barra_principal">
+    <h1 class="titulo-principal">Inventario General</h1>
+    <img src="https://www.uleam.edu.ec/wp-content/uploads/2012/09/LOGO-ULEAM-VERTICAL.png" class="logo-uleam" style="height:70px;">
+  </div>
+  <div style="max-width:1050px;margin:auto;padding:19px;">
+    <!-- Barra de acciones/filtros -->
+    <div class="filtros-bar">
+      <input type="text" id="buscar" placeholder="Buscar por nombre, serie o responsable...">
+      <select id="tipoFiltro">
+        <option value="">Tipo</option>
+        <option>Computador</option>
+        <option>Proyector</option>
+        <option>Impresora</option>
+        <option>UPS</option>
+        <option>Tablet</option>
+        <option>Servidor</option>
+      </select>
+      <select id="ubicacionFiltro"><option value="">Ubicación</option></select>
+      <select id="estadoFiltro">
+        <option value="">Estado</option>
+        <option>Activo</option>
+        <option>En reparación</option>
+        <option>Dado de baja</option>
+      </select>
+      <input type="date" id="fechaFiltro">
+      <button onclick="filtrosReset()">Limpiar filtros</button>
+      <button class="btn-blue" onclick="cargarDatosDemo()">Actualizar</button>
+      <button class="btn-blue" style="margin-left:auto;" onclick="nuevoEquipo()">Nuevo equipo</button>
+    </div>
+    <!-- Tabla del inventario -->
+    <div style="background:#fff;border-radius:14px;padding:16px;margin-bottom:16px;box-shadow:0 2px 18px #edf2f7;">
+      <table class="tabla-inventario" id="tablaInventario" style="width:100%;">
+        <thead>
+          <tr>
+            <th>Nombre del equipo</th><th>Tipo</th><th>Ubicación</th><th>Estado</th>
+            <th>N.º de serie</th><th>Responsable</th><th>Fecha ingreso/mant.</th>
+          </tr>
+        </thead>
+        <tbody id="inventarioBody"></tbody>
+      </table>
+    </div>
+
+    <!-- Formulario registrar/editar -->
+    <div class="form-cont">
+      <div class="titulo-seccion">Registrar / Editar equipo</div>
+      <form class="form-inline" id="formEquipo" onsubmit="guardarEquipo(event)">
+        <div style="flex:1;">
+          <label>Nombre del equipo</label>
+          <input type="text" id="nombreEquipo" placeholder="Ej. PC Docencia Lab 12" required>
+        </div>
+        <div style="flex:1;">
+          <label>Tipo</label>
+          <select id="tipoEquipo" required>
+            <option value="">Seleccionar tipo</option>
+            <option>Computador</option><option>Proyector</option><option>Impresora</option>
+            <option>UPS</option><option>Tablet</option><option>Servidor</option>
+          </select>
+        </div>
+        <div style="flex:1;">
+          <label>Ubicación</label>
+          <input type="text" id="ubicacionEquipo" placeholder="Seleccionar ubicación" required>
+        </div>
+        <div style="flex:1;">
+          <label>Estado</label>
+          <select id="estadoEquipo" required>
+            <option>Activo</option><option>En reparación</option><option>Dado de baja</option>
+          </select>
+        </div>
+        <div style="flex:1;">
+          <label>Número de serie</label>
+          <input type="text" id="serieEquipo" placeholder="Ingresa N.º de serie" required>
+        </div>
+        <div style="flex:1;">
+          <label>Responsable</label>
+          <input type="text" id="responsableEquipo" placeholder="Seleccionar responsable" required>
+        </div>
+        <div style="flex-basis:100%;">
+          <label>Notas de mantenimiento / eventos</label>
+          <input type="text" id="notaEquipo" placeholder="Describe mantenimiento realizado o evento asociado...">
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-rojo" onclick="formLimpiar()">Limpiar</button>
+          <button type="submit" class="btn-verde">Guardar equipo</button>
+        </div>
+      </form>
+    </div>
+  </div>
+<script>
+let inventario=[
+  {
+    nombre:'PC Docencia Lab 12',tipo:'Computador',ubicacion:'Bloque A — Lab 3',estado:'Activo',
+    serie:'SER-PC-009812',responsable:'Ana Pérez',fecha:'10/09/2025',avatar:'https://randomuser.me/api/portraits/women/40.jpg'
+  },
+  {
+    nombre:'Proyector Aula Magna',tipo:'Proyector',ubicacion:'Aula Magna',estado:'En reparación',
+    serie:'PRJ-77231',responsable:'Carlos Ruiz',fecha:'05/10/2025',avatar:'https://randomuser.me/api/portraits/men/18.jpg'
+  },
+  {
+    nombre:'Impresora Adm. 2º piso',tipo:'Impresora',ubicacion:'Bloque B — Admin',estado:'Activo',
+    serie:'HP-12A-5542',responsable:'Diana Soto',fecha:'22/08/2025',avatar:'https://randomuser.me/api/portraits/women/68.jpg'
+  },
+  {
+    nombre:'UPS Biblioteca',tipo:'UPS',ubicacion:'Biblioteca Central',estado:'Dado de baja',
+    serie:'UPS-1500-AX9',responsable:'Luis Cano',fecha:'01/07/2025',avatar:'https://randomuser.me/api/portraits/men/22.jpg'
+  }
+];
+
+function renderTabla() {
+  let body = '';
+  for(let eq of inventario){
+    body += `<tr>
+      <td>${eq.nombre}</td>
+      <td>${eq.tipo}</td>
+      <td>${eq.ubicacion}</td>
+      <td>${badgeEstado(eq.estado)}</td>
+      <td>${eq.serie}</td>
+      <td>
+        ${eq.avatar ? `<img src="${eq.avatar}" class="avatar-small" alt="avatar">` : ''}
+        ${eq.responsable}
+      </td>
+      <td>${eq.fecha}</td>
+    </tr>`;
+  }
+  document.getElementById('inventarioBody').innerHTML = body;
+}
+function badgeEstado(est) {
+  if(/activo/i.test(est)) return `<span class="badge-gris">${est}</span>`;
+  if(/repar/i.test(est)) return `<span class="badge-repar">${est}</span>`;
+  if(/baja/i.test(est)) return `<span class="badge-baja">${est}</span>`;
+  return `<span class="badge-blue">${est}</span>`;
+}
+// Filtros, acciones demo
+function filtrosReset() {
+  document.getElementById('buscar').value='';
+  document.getElementById('tipoFiltro').selectedIndex=0;
+  document.getElementById('ubicacionFiltro').selectedIndex=0;
+  document.getElementById('estadoFiltro').selectedIndex=0;
+  document.getElementById('fechaFiltro').value='';
+  renderTabla();
+}
+function cargarDatosDemo() { renderTabla(); }
+function nuevoEquipo(){
+  document.getElementById('formEquipo').reset();
+  window.scrollTo(0,document.body.scrollHeight);
+}
+function guardarEquipo(e){
+  e.preventDefault();
+  inventario.push({
+    nombre:document.getElementById('nombreEquipo').value,
+    tipo:document.getElementById('tipoEquipo').value,
+    ubicacion:document.getElementById('ubicacionEquipo').value,
+    estado:document.getElementById('estadoEquipo').value,
+    serie:document.getElementById('serieEquipo').value,
+    responsable:document.getElementById('responsableEquipo').value,
+    fecha: new Date().toLocaleDateString("es-EC"),
+    avatar:""
+  });
+  renderTabla(); e.target.reset();
+}
+function formLimpiar(){
+  document.getElementById('formEquipo').reset();
+}
+window.onload=renderTabla;
+</script>
+</body>
+</html>

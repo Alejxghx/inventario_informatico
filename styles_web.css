@@ -1,0 +1,191 @@
+/* Fuente y fondo generales */
+body {
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  background: #fff;
+}
+
+/* --------------------------------------------------
+   Barra superior: título y logo
+   -------------------------------------------------- */
+.barra_principal {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1rem 20px 1rem 20px;
+  margin-top: 0;
+  margin-bottom: 0;
+  box-sizing: border-box;
+}
+
+/* Título principal */
+.titulo-principal {
+  margin: 0;
+  padding: 0;
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+/* Logo */
+.logo-uleam {
+  width: 120px;
+  height: auto;
+  margin-top: 0;
+}
+
+/* Subtítulo y botón informativo */
+.subtitulo {
+  font-size: 1.2rem;
+  color: #555;
+  margin-left: 20px;
+}
+
+.btn-roles {
+  background: #a8f5c8;
+  color: #1f3b27;
+  padding: 8px 16px;
+  margin-left: 20px;
+  border-radius: 7px;
+  border: none;
+  font-weight: bold;
+}
+
+/* --------------------------------------------------
+   Layout: contenedor principal y grid de tarjetas
+   -------------------------------------------------- */
+.contenedor-roles {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 32px;
+}
+
+.seleccion-roles {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px; /* Espacio entre tarjetas */
+  flex: 2; /* Más ancho que el resumen */
+}
+
+/* --------------------------------------------------
+   Tarjetas de rol: estilo base y estados
+   -------------------------------------------------- */
+.rol-card {
+  border: 1.5px solid #d5daea;
+  border-radius: 12px;
+  padding: 18px 16px;
+  background: #fff;
+  cursor: pointer;
+  transition: 
+    border 0.2s, 
+    box-shadow 0.3s, 
+    background 0.2s, 
+    transform 0.3s;
+  /* Apila vertical el contenido interno */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.rol-card:hover {
+  transform: translateY(-8px); /* Se eleva */
+  border: 2px solid #d83919; /* Borde rojo */
+  box-shadow: 0 0 20px rgba(216, 57, 25, 0.23); /* Resplandor rojo */
+}
+
+.rol-card.activo {
+  border: 2px solid #d83919; /* borde rojo */
+  background-color: #f6f9ff; /* azul muy claro */
+  box-shadow: 0 0 15px rgba(216, 57, 25, 0.18); /* extra glow */
+}
+
+/* Iconos dentro de las tarjetas */
+.icono {
+  width: 40px;
+  height: 40px;
+  background-color: #d1d5db;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+  margin-top: 6px;
+}
+
+.icono svg {
+  width: 24px;
+  height: 24px;
+  stroke: #222;
+}
+
+/* --------------------------------------------------
+   Panel lateral: resumen del rol seleccionado
+   -------------------------------------------------- */
+.resumen-rol {
+  background: #c1f5c7;
+  border-radius: 10px;
+  padding: 18px 20px;
+  flex: 1;
+  font-size: 15px;
+  color: #355339;
+  min-width: 320px;
+  min-height: 220px;
+}
+
+.resumen-rol h3 {
+  margin-top: 0;
+  font-size: 1.2em;
+}
+
+.nota {
+  margin-top: 12px;
+  color: #2c6f30;
+  font-size: 0.99em;
+}
+
+/* Indicador de rol seleccionado */
+#rol-seleccionado {
+  margin-left: 20px;
+  font-size: 1.1em;
+  color: #666;
+}
+
+/* --------------------------------------------------
+   Botones: retroceso y confirmar
+   -------------------------------------------------- */
+.btn-rojo {
+  background: #ee5555;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  margin: 8px 10px 0 20px;
+  border-radius: 7px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-verde {
+  background: #47b562;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  margin: 8px 0 0 0;
+  border-radius: 7px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* --------------------------------------------------
+   Responsive: menor a 920px
+   -------------------------------------------------- */
+@media screen and (max-width: 920px) {
+  .contenedor-roles {
+    flex-direction: column;
+    gap: 24px;
+  }
+  .resumen-rol {
+    min-width: initial;
+    width: 100%;
+    margin-top: 8px;
+  }
+}
