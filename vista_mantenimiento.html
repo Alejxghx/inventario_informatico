@@ -391,6 +391,65 @@
   </div>
 
   <script>
+    // Obtener inventario del localStorage
+    function obtenerInventario() {
+    return JSON.parse(localStorage.getItem('inventarioULEAM')) || [];
+    }
+
+    // Sistema de órdenes de mantenimiento
+    function obtenerOrdenes() {
+    return JSON.parse(localStorage.getItem('ordenesMantenimiento')) || [];
+    }
+
+    function guardarOrden(orden) {
+    const ordenes = obtenerOrdenes();
+    ordenes.push(orden);
+    localStorage.setItem('ordenesMantenimiento', JSON.stringify(ordenes));
+    actualizarEstadisticasMantenimiento();
+    }
+
+    function actualizarEstadisticasMantenimiento() {
+    const ordenes = obtenerOrdenes();
+    const pendientes = ordenes.filter(o => o.estado === 'Pendiente').length;
+    const proceso = ordenes.filter(o => o.estado === 'En proceso').length;
+    const completadas = ordenes.filter(o => o.estado === 'Completado').length;
+    
+    document.getElementById('totalPendientes').textContent = pendientes;
+    document.getElementById('totalProceso').textContent = proceso;
+    document.getElementById('totalCompletadas').textContent = completadas;
+    }
+
+    // Modificar la función existente de guardarOrden
+    function guardarOrden(e) {
+    e.preventDefault();
+    const nuevaOrden = {
+        id: 'MT-' + new Date().getFullYear() + '-' + Math.floor(Math.random() * 1000),
+        equipo: document.getElementById('equipoOrden').value,
+        tipo: document.getElementById('tipoMant').value,
+        estado: 'Pendiente',
+        prioridad: document.getElementById('prioridadOrden').value,
+        asignado: document.getElementById('asignadoOrden').value,
+        fechaCreacion: new Date().toLocaleDateString(),
+        fechaLimite: document.getElementById('fechaLimite').value,
+        descripcion: document.getElementById('descripcionOrden').value
+    };
+    
+    guardarOrden(nuevaOrden);
+    cerrarModalOrden();
+    document.getElementById('formNuevaOrden').reset();
+    renderizarOrdenes();
+    }
+
+    window.onload = function() {
+    actualizarEstadisticasMantenimiento();
+    const inventario = obtenerInventario();
+    
+    // Poblar select de equipos
+    const selectEquipos = document.getElementById('equipoOrden');
+    selectEquipos.innerHTML = '<option value="">Seleccionar equipo</option>' +
+        inventario.map(item => `<option>${item.nombre}</option>`).join('');
+    };
+
     function cambiarTab(tab) {
       document.querySelectorAll('.tabs-container button').forEach(btn => btn.classList.remove('activo'));
       event.target.classList.add('activo');

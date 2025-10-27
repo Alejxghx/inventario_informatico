@@ -511,10 +511,89 @@
       }
     }
 
-    // Cargar datos del CSV si existe
-    window.onload = function() {
-      console.log('Vista de consulta cargada correctamente');
+    function obtenerInventario() {
+      return JSON.parse(localStorage.getItem('inventarioULEAM')) || [];
     }
+
+    function actualizarEstadisticas() {
+      const inventario = obtenerInventario();
+      const total = inventario.length;
+      const activos = inventario.filter(e => /activo/i.test(e.estado)).length;
+      const reparacion = inventario.filter(e => /repar/i.test(e.estado)).length;
+      const baja = inventario.filter(e => /baja/i.test(e.estado)).length;
+
+      // Actualizar resumen ejecutivo
+      document.querySelector('.resumen-box p').innerHTML = 
+        `Su facultad cuenta con <strong>${total} equipos registrados</strong> distribuidos en <strong>12 ubicaciones</strong>. 
+         El <strong>${Math.round((activos/total)*100)}% están operativos</strong> y hay <strong>${reparacion} mantenimientos programados</strong> para esta semana.`;
+
+      // Actualizar dashboard
+      document.querySelectorAll('.numero-grande')[0].textContent = total;
+      document.querySelectorAll('.numero-grande')[1].textContent = activos;
+      document.querySelectorAll('.numero-grande')[2].textContent = reparacion;
+      document.querySelectorAll('.numero-grande')[3].textContent = baja;
+    }
+
+    function renderizarTablaConsulta() {
+      const inventario = obtenerInventario();
+      const tbody = document.getElementById('tablaInventarioBody');
+      tbody.innerHTML = inventario.map(item => `
+        <tr>
+          <td><strong>${item.nombre}</strong></td>
+          <td>${item.tipo}</td>
+          <td>${item.ubicacion}</td>
+          <td><span class="badge-estado ${item.estado.toLowerCase().replace(' ', '')}">${item.estado}</span></td>
+          <td>${item.serie}</td>
+          <td>${item.responsable}</td>
+          <td>$${item.valor.toFixed(2)}</td>
+          <td>${item.fecha}</td>
+        </tr>
+      `).join('');
+    }
+
+    // Funciones de filtrado
+function aplicarFiltros() {
+  const texto = document.getElementById('buscarEquipo').value.toLowerCase();
+  const tipo = document.getElementById('filtroTipo').value.toLowerCase();
+  const ubicacion = document.getElementById('filtroUbicacion').value.toLowerCase();
+  const estado = document.getElementById('filtroEstado').value.toLowerCase();
+
+  const inventario = obtenerInventario();
+  const filtrado = inventario.filter(item => 
+    (!texto || item.nombre.toLowerCase().includes(texto) || 
+     item.serie.toLowerCase().includes(texto) ||
+     item.responsable.toLowerCase().includes(texto)) &&
+    (!tipo || item.tipo.toLowerCase() === tipo) &&
+    (!ubicacion || item.ubicacion.toLowerCase() === ubicacion) &&
+    (!estado || item.estado.toLowerCase() === estado)
+  );
+
+  const tbody = document.getElementById('tablaInventarioBody');
+  tbody.innerHTML = filtrado.map(item => `
+    <tr>
+      <td><strong>${item.nombre}</strong></td>
+      <td>${item.tipo}</td>
+      <td>${item.ubicacion}</td>
+      <td><span class="badge-estado ${item.estado.toLowerCase().replace(' ', '')}">${item.estado}</span></td>
+      <td>${item.serie}</td>
+      <td>${item.responsable}</td>
+      <td>$${item.valor.toFixed(2)}</td>
+      <td>${item.fecha}</td>
+    </tr>
+  `).join('');
+}
+
+    // Modificar el window.onload existente
+    window.onload = function() {
+      actualizarEstadisticas();
+      renderizarTablaConsulta();
+      
+      // Agregar event listeners para filtros
+      document.getElementById('buscarEquipo').addEventListener('input', aplicarFiltros);
+      document.getElementById('filtroTipo').addEventListener('change', aplicarFiltros);
+      document.getElementById('filtroUbicacion').addEventListener('change', aplicarFiltros);
+      document.getElementById('filtroEstado').addEventListener('change', aplicarFiltros);
+    };
   </script>
 </body>
 </html>

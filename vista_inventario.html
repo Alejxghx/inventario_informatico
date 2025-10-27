@@ -131,77 +131,59 @@
 
 <script>
 // ========== SISTEMA DE ALMACENAMIENTO SINCRONIZADO ==========
+let inventarioGlobal = [];
 
-// Inicializar inventario desde localStorage o cargar datos de ejemplo
-function inicializarInventario() {
-  let inventario = JSON.parse(localStorage.getItem('inventarioULEAM'));
-  
-  if (!inventario || inventario.length === 0) {
-    // Datos iniciales de ejemplo
-    inventario = [
-      {
-        nombre:'PC Docencia Lab 12', tipo:'Computador', ubicacion:'Bloque A — Lab 3', estado:'Activo',
-        serie:'SER-PC-009812', responsable:'Ana Pérez', fecha:'10/09/2025',
-        marca:'Dell', modelo:'Optiplex 7090', valor:1450.00, proveedor:'CompuExpress', notas:'Equipo principal de laboratorio.'
-      },
-      {
-        nombre:'Proyector Aula Magna', tipo:'Proyector', ubicacion:'Aula Magna', estado:'En reparación',
-        serie:'PRJ-77231', responsable:'Carlos Ruiz', fecha:'05/10/2025',
-        marca:'Epson', modelo:'EB-X51', valor:730.00, proveedor:'Epson Ecuador', notas:'Pendiente repuesto lámpara.'
-      },
-      {
-        nombre:'Impresora Adm. 2º piso', tipo:'Impresora', ubicacion:'Bloque B — Admin', estado:'Activo',
-        serie:'HP-12A-5542', responsable:'Diana Soto', fecha:'22/08/2025',
-        marca:'HP', modelo:'LaserJet M404', valor:890.00, proveedor:'OfiPro', notas:'Papel trabado resuelto.'
-      },
-      {
-        nombre:'UPS Biblioteca', tipo:'UPS', ubicacion:'Biblioteca Central', estado:'Dado de baja',
-        serie:'UPS-1500-AX9', responsable:'Luis Cano', fecha:'01/07/2025',
-        marca:'APC', modelo:'Smart-UPS 1500', valor:560.00, proveedor:'ElectroDigital', notas:'Reciclado después de falla batería.'
-      },
-      {
-        nombre:'Laptop Posgrado', tipo:'Computador', ubicacion:'Bloque C — Posgrado', estado:'Activo',
-        serie:'LT-PGR-2025A', responsable:'Marina Aguayo', fecha:'03/02/2025',
-        marca:'Lenovo', modelo:'ThinkPad E14', valor:1680.00, proveedor:'Lenovo Ecuador', notas:'Asignado a profesora visitante.'
-      },
-      {
-        nombre:'Tablet Sala Docentes', tipo:'Tablet', ubicacion:'Bloque B — Sala Docentes', estado:'Activo',
-        serie:'TB-1004-RV', responsable:'Marcelo Tapia', fecha:'13/06/2025',
-        marca:'Samsung', modelo:'Galaxy Tab A8', valor:425.00, proveedor:'DataZone', notas:'Tablet para registro digital.'
-      },
-      {
-        nombre:'Servidor Central', tipo:'Servidor', ubicacion:'DataCenter', estado:'Activo',
-        serie:'SRV-CNTRL-004', responsable:'Ing. Gonzalo Vélez', fecha:'08/01/2025',
-        marca:'HPE', modelo:'ProLiant DL380', valor:6500.00, proveedor:'HPE Quito', notas:'Servidor con backup diario.'
-      },
-      {
-        nombre:'Router Principal', tipo:'Router', ubicacion:'Oficina de IT', estado:'Activo',
-        serie:'RT-PR-2025B', responsable:'Sofía Martínez', fecha:'15/03/2025',
-        marca:'Cisco', modelo:'Catalyst 9200', valor:1200.00, proveedor:'Cisco Store', notas:'Configurado para red interna.'
-      }
-    ];
-    localStorage.setItem('inventarioULEAM', JSON.stringify(inventario));
-  }
-  return inventario;
-}
-
-// Guardar inventario en localStorage
-function guardarInventarioLocal(inventario) {
-  localStorage.setItem('inventarioULEAM', JSON.stringify(inventario));
-}
-
-// Cargar y renderizar tabla
 function cargarInventario() {
-  const inventario = inicializarInventario();
-  renderTabla(inventario);
-  actualizarContadores(inventario);
-  cargarUbicaciones(inventario);
+  inventarioGlobal = [
+    {
+      nombre:'PC Docencia Lab 12', tipo:'Computador', ubicacion:'Bloque A — Lab 3', estado:'Activo',
+      serie:'SER-PC-009812', responsable:'Ana Pérez', fecha:'10/09/2025',
+      marca:'Dell', modelo:'Optiplex 7090', valor:1450.00, proveedor:'CompuExpress', notas:'Equipo principal de laboratorio.'
+    },
+    {
+      nombre:'Proyector Aula Magna', tipo:'Proyector', ubicacion:'Aula Magna', estado:'En reparación',
+      serie:'PRJ-77231', responsable:'Carlos Ruiz', fecha:'05/10/2025',
+      marca:'Epson', modelo:'EB-X51', valor:730.00, proveedor:'Epson Ecuador', notas:'Pendiente repuesto lámpara.'
+    },
+    {
+      nombre:'Impresora Adm. 2º piso', tipo:'Impresora', ubicacion:'Bloque B — Admin', estado:'Activo',
+      serie:'HP-12A-5542', responsable:'Diana Soto', fecha:'22/08/2025',
+      marca:'HP', modelo:'LaserJet M404', valor:890.00, proveedor:'OfiPro', notas:'Papel trabado resuelto.'
+    },
+    {
+      nombre:'UPS Biblioteca', tipo:'UPS', ubicacion:'Biblioteca Central', estado:'Dado de baja',
+      serie:'UPS-1500-AX9', responsable:'Luis Cano', fecha:'01/07/2025',
+      marca:'APC', modelo:'Smart-UPS 1500', valor:560.00, proveedor:'ElectroDigital', notas:'Reciclado después de falla batería.'
+    },
+    {
+      nombre:'Laptop Posgrado', tipo:'Computador', ubicacion:'Bloque C — Posgrado', estado:'Activo',
+      serie:'LT-PGR-2025A', responsable:'Marina Aguayo', fecha:'03/02/2025',
+      marca:'Lenovo', modelo:'ThinkPad E14', valor:1680.00, proveedor:'Lenovo Ecuador', notas:'Asignado a profesora visitante.'
+    },
+    {
+      nombre:'Tablet Sala Docentes', tipo:'Tablet', ubicacion:'Bloque B — Sala Docentes', estado:'Activo',
+      serie:'TB-1004-RV', responsable:'Marcelo Tapia', fecha:'13/06/2025',
+      marca:'Samsung', modelo:'Galaxy Tab A8', valor:425.00, proveedor:'DataZone', notas:'Tablet para registro digital.'
+    },
+    {
+      nombre:'Servidor Central', tipo:'Servidor', ubicacion:'DataCenter', estado:'Activo',
+      serie:'SRV-CNTRL-004', responsable:'Ing. Gonzalo Vélez', fecha:'08/01/2025',
+      marca:'HPE', modelo:'ProLiant DL380', valor:6500.00, proveedor:'HPE Quito', notas:'Servidor con backup diario.'
+    },
+    {
+      nombre:'Router Principal', tipo:'Router', ubicacion:'Oficina de IT', estado:'Activo',
+      serie:'RT-PR-2025B', responsable:'Sofía Martínez', fecha:'15/03/2025',
+      marca:'Cisco', modelo:'Catalyst 9200', valor:1200.00, proveedor:'Cisco Store', notas:'Configurado para red interna.'
+    }
+  ];
+  renderTabla();
+  actualizarContadores();
 }
 
-function renderTabla(inventario) {
+function renderTablaFiltrada(equiposFiltrados) {
   let body = '';
-  for(let i = 0; i < inventario.length; i++){
-    const eq = inventario[i];
+  for(let i = 0; i < equiposFiltrados.length; i++) {
+    const eq = equiposFiltrados[i];
     body += `<tr>
       <td><strong>${eq.nombre}</strong></td>
       <td>${eq.tipo}</td>
@@ -215,21 +197,41 @@ function renderTabla(inventario) {
       </td>
     </tr>`;
   }
-  document.getElementById('inventarioBody').innerHTML = body || '<tr><td colspan="8" style="text-align:center; padding:20px; color:#888;">No hay equipos registrados</td></tr>';
+  document.getElementById('inventarioBody').innerHTML = body;
 }
 
-function badgeEstado(est) {
-  if(/activo/i.test(est)) return `<span class="badge-gris">${est}</span>`;
-  if(/repar/i.test(est)) return `<span class="badge-repar">${est}</span>`;
-  if(/baja/i.test(est)) return `<span class="badge-baja">${est}</span>`;
-  return `<span class="badge-blue">${est}</span>`;
+function badgeEstado(estado) {
+  const clases = {
+    'Activo': 'badge-success',
+    'En reparación': 'badge-warning',
+    'Dado de baja': 'badge-danger'
+  };
+  return `<span class="badge ${clases[estado] || ''}">${estado}</span>`;
 }
 
-function actualizarContadores(inventario) {
-  const total = inventario.length;
-  const activos = inventario.filter(e => /activo/i.test(e.estado)).length;
-  const reparacion = inventario.filter(e => /repar/i.test(e.estado)).length;
-  const baja = inventario.filter(e => /baja/i.test(e.estado)).length;
+function filtrosReset() {
+  document.getElementById('buscar').value = '';
+  document.getElementById('tipoFiltro').value = '';
+  document.getElementById('ubicacionFiltro').value = '';
+  document.getElementById('estadoFiltro').value = '';
+  document.getElementById('fechaFiltro').value = '';
+  renderTabla();
+}
+
+function nuevoEquipo() {
+  document.getElementById('formEquipo').reset();
+  document.getElementById('nombreEquipo').focus();
+}
+
+function formLimpiar() {
+  document.getElementById('formEquipo').reset();
+}
+
+function actualizarContadores() {
+  const total = inventarioGlobal.length;
+  const activos = inventarioGlobal.filter(e => /activo/i.test(e.estado)).length;
+  const reparacion = inventarioGlobal.filter(e => /repar/i.test(e.estado)).length;
+  const baja = inventarioGlobal.filter(e => /baja/i.test(e.estado)).length;
   
   document.getElementById('contadorTotal').textContent = total;
   document.getElementById('contadorActivos').textContent = activos;
@@ -237,20 +239,8 @@ function actualizarContadores(inventario) {
   document.getElementById('contadorBaja').textContent = baja;
 }
 
-function cargarUbicaciones(inventario) {
-  const ubicaciones = [...new Set(inventario.map(e => e.ubicacion))].sort();
-  const select = document.getElementById('ubicacionFiltro');
-  select.innerHTML = '<option value="">Ubicación</option>';
-  ubicaciones.forEach(ub => {
-    select.innerHTML += `<option>${ub}</option>`;
-  });
-}
-
-// Guardar nuevo equipo
 function guardarEquipo(e) {
   e.preventDefault();
-  
-  const inventario = inicializarInventario();
   const nuevoEquipo = {
     nombre: document.getElementById('nombreEquipo').value,
     tipo: document.getElementById('tipoEquipo').value,
@@ -258,7 +248,7 @@ function guardarEquipo(e) {
     estado: document.getElementById('estadoEquipo').value,
     serie: document.getElementById('serieEquipo').value,
     responsable: document.getElementById('responsableEquipo').value,
-    fecha: new Date().toLocaleDateString("es-EC"),
+    fecha: new Date().toLocaleDateString(),
     marca: document.getElementById('marcaEquipo').value || '-',
     modelo: document.getElementById('modeloEquipo').value || '-',
     valor: parseFloat(document.getElementById('valorEquipo').value) || 0,
@@ -266,62 +256,71 @@ function guardarEquipo(e) {
     notas: document.getElementById('notaEquipo').value || '-'
   };
   
-  inventario.push(nuevoEquipo);
-  guardarInventarioLocal(inventario);
-  cargarInventario();
+  inventarioGlobal.push(nuevoEquipo);
+  renderTabla();
+  actualizarContadores();
   e.target.reset();
-  alert('✅ Equipo guardado correctamente y sincronizado en todas las vistas');
-  window.scrollTo(0, 0);
+  alert('✅ Equipo guardado correctamente');
 }
 
-// Eliminar equipo
 function eliminarEquipo(index) {
-  if(confirm('¿Está seguro de eliminar este equipo del inventario?')) {
-    const inventario = inicializarInventario();
-    inventario.splice(index, 1);
-    guardarInventarioLocal(inventario);
-    cargarInventario();
-    alert('✅ Equipo eliminado correctamente');
+  if(confirm('¿Está seguro de eliminar este equipo?')) {
+    inventarioGlobal.splice(index, 1);
+    renderTabla();
+    actualizarContadores();
   }
 }
 
-// Filtros
-function filtrosReset() {
-  document.getElementById('buscar').value = '';
-  document.getElementById('tipoFiltro').selectedIndex = 0;
-  document.getElementById('ubicacionFiltro').selectedIndex = 0;
-  document.getElementById('estadoFiltro').selectedIndex = 0;
-  document.getElementById('fechaFiltro').value = '';
-  cargarInventario();
+
+function aplicarFiltros() {
+  const textoBusqueda = document.getElementById('buscar').value.toLowerCase();
+  const tipoFiltro = document.getElementById('tipoFiltro').value;
+  const ubicacionFiltro = document.getElementById('ubicacionFiltro').value;
+  const estadoFiltro = document.getElementById('estadoFiltro').value;
+  const fechaFiltro = document.getElementById('fechaFiltro').value;
+
+  const equiposFiltrados = inventarioGlobal.filter(equipo => {
+    return (!textoBusqueda || 
+            equipo.nombre.toLowerCase().includes(textoBusqueda) ||
+            equipo.serie.toLowerCase().includes(textoBusqueda) ||
+            equipo.responsable.toLowerCase().includes(textoBusqueda)) &&
+           (!tipoFiltro || equipo.tipo === tipoFiltro) &&
+           (!ubicacionFiltro || equipo.ubicacion === ubicacionFiltro) &&
+           (!estadoFiltro || equipo.estado === estadoFiltro) &&
+           (!fechaFiltro || equipo.fecha === fechaFiltro);
+  });
+
+  renderTablaFiltrada(equiposFiltrados);
 }
 
-function nuevoEquipo() {
-  document.getElementById('formEquipo').reset();
-  window.scrollTo(0, document.body.scrollHeight);
-}
-
-function formLimpiar() {
-  document.getElementById('formEquipo').reset();
-}
-
-function cerrarSesion() {
-  if(confirm('¿Desea cerrar sesión?')) {
-    sessionStorage.clear();
-    window.location.href = 'Seleccion_usuario.html';
+function renderTabla() {
+  const tbody = document.getElementById('inventarioBody');
+  let html = '';
+  
+  for(let i = 0; i < inventarioGlobal.length; i++) {
+    const eq = inventarioGlobal[i];
+    html += `<tr>
+      <td><strong>${eq.nombre}</strong></td>
+      <td>${eq.tipo}</td>
+      <td>${eq.ubicacion}</td>
+      <td>${badgeEstado(eq.estado)}</td>
+      <td>${eq.serie}</td>
+      <td>${eq.responsable}</td>
+      <td>${eq.fecha}</td>
+      <td>
+        <button class="btn-eliminar" onclick="eliminarEquipo(${i})">🗑️ Eliminar</button>
+      </td>
+    </tr>`;
   }
+  
+  tbody.innerHTML = html;
 }
 
-function cambiarTab(tab) {
-      document.querySelectorAll('.tabs-nav button').forEach(btn => btn.classList.remove('activo'));
-      event.target.classList.add('activo');
-      
-      document.getElementById('tab-inventario').style.display = 'none';
-      document.getElementById('tab-ubicaciones').style.display = 'none';
-      document.getElementById('tab-estadisticas').style.display = 'none';
-      document.getElementById('tab-mantenimientos').style.display = 'none';
-      
-      document.getElementById('tab-' + tab).style.display = 'block';
-    }
+document.getElementById('buscar').addEventListener('input', aplicarFiltros);
+document.getElementById('tipoFiltro').addEventListener('change', aplicarFiltros);
+document.getElementById('ubicacionFiltro').addEventListener('change', aplicarFiltros);
+document.getElementById('estadoFiltro').addEventListener('change', aplicarFiltros);
+document.getElementById('fechaFiltro').addEventListener('change', aplicarFiltros);
 
 // Cargar al inicio
 window.onload = cargarInventario;
