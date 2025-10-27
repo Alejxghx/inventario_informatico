@@ -4,39 +4,30 @@
   <meta charset="UTF-8">
   <title>Inventario General - ULEAM</title>
   <link rel="stylesheet" href="styles_web.css">
-  <style>
-    /* Extra (puedes poner en tu CSS global si prefieres) */
-    .filtros-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
-    .filtros-bar input, .filtros-bar select { border: 1.5px solid #d5daea; border-radius: 8px; padding: 7px 10px; background: #f6f9ff; font-size: 1em;}
-    .filtros-bar button, .btn-blue {
-      background: #3477f7; color: #fff; border-radius:8px;border:none;padding:7px 16px;font-weight:600;cursor:pointer
-    }
-    .filtros-bar button:hover, .btn-blue:hover { background: #2456a7;}
-    .tabla-inventario th, .tabla-inventario td { padding:9px 12px;text-align:left; }
-    .avatar-small {width:28px;height:28px;border-radius:50%;object-fit:cover;vertical-align:middle;}
-    .badge-gris{background:#dbe7ed;color:#232b39;padding:4px 12px;border-radius:13px;font-weight:600;font-size:.97em;}
-    .badge-blue{background:#e8eefd;color:#3365b8;padding:4px 12px;border-radius:13px;font-weight:600;}
-    .badge-repar{background:#fff1db;color:#d08c2c;padding:4px 12px;border-radius:13px;font-weight:600;}
-    .badge-baja{background:#fdeceb;color:#e34343;padding:4px 12px;border-radius:13px;font-weight:600;}
-    .form-cont {background:#fff;border-radius:13px;box-shadow:0 2px 18px #edf2f7;height:auto;padding:18px 22px;margin:22px 0;}
-    .form-inline {display: flex;gap:15px;flex-wrap: wrap;}
-    .form-inline label{font-weight:500; margin-bottom:2px;display:block;}
-    .form-inline input, .form-inline select {border: 1.1px solid #d5daea; border-radius: 7px; padding:7px 9px;background:#f5fafe; font-size:1em;width:95%;}
-    .form-actions {margin-top:12px;display:flex;gap:12px;}
-    .btn-verde {background: #47b562;}
-    .btn-rojo {background: #d83919;}
-    .titulo-seccion {font-size:1.2em;font-weight:600;margin-bottom:9px;}
-    /* Responsive */
-    @media(max-width:800px){.form-inline{flex-direction:column;}.filtros-bar{flex-direction:column;}}
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-  <!-- Barra principal -->
   <div class="barra_principal">
     <h1 class="titulo-principal">Inventario General</h1>
-    <img src="https://www.uleam.edu.ec/wp-content/uploads/2012/09/LOGO-ULEAM-VERTICAL.png" class="logo-uleam" style="height:70px;">
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <button class="btn-rojo" onclick="cerrarSesion()">Cerrar Sesión</button>
+      <img src="https://www.uleam.edu.ec/wp-content/uploads/2012/09/LOGO-ULEAM-VERTICAL.png" class="logo-uleam" style="height:70px;">
+    </div>
   </div>
   <div style="max-width:1050px;margin:auto;padding:19px;">
+    <!-- Contador de equipos -->
+    <div style="background: #c1f5c7; padding: 12px 20px; border-radius: 10px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <strong style="font-size: 1.1em;">Total de Equipos:</strong> 
+        <span id="contadorTotal" style="font-size: 1.3em; font-weight: 700;">0</span>
+      </div>
+      <div style="font-size: 0.9em; color: #1f3b27;">
+        Activos: <strong id="contadorActivos">0</strong> | 
+        En reparación: <strong id="contadorReparacion">0</strong> | 
+        Dados de baja: <strong id="contadorBaja">0</strong>
+      </div>
+    </div>
+
     <!-- Barra de acciones/filtros -->
     <div class="filtros-bar">
       <input type="text" id="buscar" placeholder="Buscar por nombre, serie o responsable...">
@@ -48,6 +39,7 @@
         <option>UPS</option>
         <option>Tablet</option>
         <option>Servidor</option>
+        <option>Router</option>
       </select>
       <select id="ubicacionFiltro"><option value="">Ubicación</option></select>
       <select id="estadoFiltro">
@@ -58,16 +50,17 @@
       </select>
       <input type="date" id="fechaFiltro">
       <button onclick="filtrosReset()">Limpiar filtros</button>
-      <button class="btn-blue" onclick="cargarDatosDemo()">Actualizar</button>
-      <button class="btn-blue" style="margin-left:auto;" onclick="nuevoEquipo()">Nuevo equipo</button>
+      <button class="btn-blue" onclick="cargarInventario()">🔄 Actualizar</button>
+      <button class="btn-blue" style="margin-left:auto;" onclick="nuevoEquipo()">+ Nuevo equipo</button>
     </div>
+
     <!-- Tabla del inventario -->
     <div style="background:#fff;border-radius:14px;padding:16px;margin-bottom:16px;box-shadow:0 2px 18px #edf2f7;">
-      <table class="tabla-inventario" id="tablaInventario" style="width:100%;">
+      <table class="tabla-inventario" id="tablaInventario">
         <thead>
           <tr>
             <th>Nombre del equipo</th><th>Tipo</th><th>Ubicación</th><th>Estado</th>
-            <th>N.º de serie</th><th>Responsable</th><th>Fecha ingreso/mant.</th>
+            <th>N.º de serie</th><th>Responsable</th><th>Fecha ingreso</th><th>Acciones</th>
           </tr>
         </thead>
         <tbody id="inventarioBody"></tbody>
@@ -79,122 +72,259 @@
       <div class="titulo-seccion">Registrar / Editar equipo</div>
       <form class="form-inline" id="formEquipo" onsubmit="guardarEquipo(event)">
         <div style="flex:1;">
-          <label>Nombre del equipo</label>
+          <label>Nombre del equipo *</label>
           <input type="text" id="nombreEquipo" placeholder="Ej. PC Docencia Lab 12" required>
         </div>
         <div style="flex:1;">
-          <label>Tipo</label>
+          <label>Tipo *</label>
           <select id="tipoEquipo" required>
             <option value="">Seleccionar tipo</option>
             <option>Computador</option><option>Proyector</option><option>Impresora</option>
-            <option>UPS</option><option>Tablet</option><option>Servidor</option>
+            <option>UPS</option><option>Tablet</option><option>Servidor</option><option>Router</option>
           </select>
         </div>
         <div style="flex:1;">
-          <label>Ubicación</label>
-          <input type="text" id="ubicacionEquipo" placeholder="Seleccionar ubicación" required>
+          <label>Ubicación *</label>
+          <input type="text" id="ubicacionEquipo" placeholder="Ej. Bloque A — Lab 3" required>
         </div>
         <div style="flex:1;">
-          <label>Estado</label>
+          <label>Estado *</label>
           <select id="estadoEquipo" required>
             <option>Activo</option><option>En reparación</option><option>Dado de baja</option>
           </select>
         </div>
         <div style="flex:1;">
-          <label>Número de serie</label>
-          <input type="text" id="serieEquipo" placeholder="Ingresa N.º de serie" required>
+          <label>Número de serie *</label>
+          <input type="text" id="serieEquipo" placeholder="Ej. SER-PC-009812" required>
         </div>
         <div style="flex:1;">
-          <label>Responsable</label>
-          <input type="text" id="responsableEquipo" placeholder="Seleccionar responsable" required>
+          <label>Responsable *</label>
+          <input type="text" id="responsableEquipo" placeholder="Nombre del responsable" required>
+        </div>
+        <div style="flex:1;">
+          <label>Marca</label>
+          <input type="text" id="marcaEquipo" placeholder="Ej. Dell">
+        </div>
+        <div style="flex:1;">
+          <label>Modelo</label>
+          <input type="text" id="modeloEquipo" placeholder="Ej. Optiplex 7090">
+        </div>
+        <div style="flex:1;">
+          <label>Valor de compra</label>
+          <input type="number" step="0.01" id="valorEquipo" placeholder="0.00">
+        </div>
+        <div style="flex:1;">
+          <label>Proveedor</label>
+          <input type="text" id="proveedorEquipo" placeholder="Nombre del proveedor">
         </div>
         <div style="flex-basis:100%;">
-          <label>Notas de mantenimiento / eventos</label>
-          <input type="text" id="notaEquipo" placeholder="Describe mantenimiento realizado o evento asociado...">
+          <label>Notas</label>
+          <input type="text" id="notaEquipo" placeholder="Notas adicionales sobre el equipo...">
         </div>
         <div class="form-actions">
           <button type="button" class="btn-rojo" onclick="formLimpiar()">Limpiar</button>
-          <button type="submit" class="btn-verde">Guardar equipo</button>
+          <button type="submit" class="btn-verde">💾 Guardar equipo</button>
         </div>
       </form>
     </div>
   </div>
-<script>
-let inventario=[
-  {
-    nombre:'PC Docencia Lab 12',tipo:'Computador',ubicacion:'Bloque A — Lab 3',estado:'Activo',
-    serie:'SER-PC-009812',responsable:'Ana Pérez',fecha:'10/09/2025',avatar:'https://randomuser.me/api/portraits/women/40.jpg'
-  },
-  {
-    nombre:'Proyector Aula Magna',tipo:'Proyector',ubicacion:'Aula Magna',estado:'En reparación',
-    serie:'PRJ-77231',responsable:'Carlos Ruiz',fecha:'05/10/2025',avatar:'https://randomuser.me/api/portraits/men/18.jpg'
-  },
-  {
-    nombre:'Impresora Adm. 2º piso',tipo:'Impresora',ubicacion:'Bloque B — Admin',estado:'Activo',
-    serie:'HP-12A-5542',responsable:'Diana Soto',fecha:'22/08/2025',avatar:'https://randomuser.me/api/portraits/women/68.jpg'
-  },
-  {
-    nombre:'UPS Biblioteca',tipo:'UPS',ubicacion:'Biblioteca Central',estado:'Dado de baja',
-    serie:'UPS-1500-AX9',responsable:'Luis Cano',fecha:'01/07/2025',avatar:'https://randomuser.me/api/portraits/men/22.jpg'
-  }
-];
 
-function renderTabla() {
+<script>
+// ========== SISTEMA DE ALMACENAMIENTO SINCRONIZADO ==========
+
+// Inicializar inventario desde localStorage o cargar datos de ejemplo
+function inicializarInventario() {
+  let inventario = JSON.parse(localStorage.getItem('inventarioULEAM'));
+  
+  if (!inventario || inventario.length === 0) {
+    // Datos iniciales de ejemplo
+    inventario = [
+      {
+        nombre:'PC Docencia Lab 12', tipo:'Computador', ubicacion:'Bloque A — Lab 3', estado:'Activo',
+        serie:'SER-PC-009812', responsable:'Ana Pérez', fecha:'10/09/2025',
+        marca:'Dell', modelo:'Optiplex 7090', valor:1450.00, proveedor:'CompuExpress', notas:'Equipo principal de laboratorio.'
+      },
+      {
+        nombre:'Proyector Aula Magna', tipo:'Proyector', ubicacion:'Aula Magna', estado:'En reparación',
+        serie:'PRJ-77231', responsable:'Carlos Ruiz', fecha:'05/10/2025',
+        marca:'Epson', modelo:'EB-X51', valor:730.00, proveedor:'Epson Ecuador', notas:'Pendiente repuesto lámpara.'
+      },
+      {
+        nombre:'Impresora Adm. 2º piso', tipo:'Impresora', ubicacion:'Bloque B — Admin', estado:'Activo',
+        serie:'HP-12A-5542', responsable:'Diana Soto', fecha:'22/08/2025',
+        marca:'HP', modelo:'LaserJet M404', valor:890.00, proveedor:'OfiPro', notas:'Papel trabado resuelto.'
+      },
+      {
+        nombre:'UPS Biblioteca', tipo:'UPS', ubicacion:'Biblioteca Central', estado:'Dado de baja',
+        serie:'UPS-1500-AX9', responsable:'Luis Cano', fecha:'01/07/2025',
+        marca:'APC', modelo:'Smart-UPS 1500', valor:560.00, proveedor:'ElectroDigital', notas:'Reciclado después de falla batería.'
+      },
+      {
+        nombre:'Laptop Posgrado', tipo:'Computador', ubicacion:'Bloque C — Posgrado', estado:'Activo',
+        serie:'LT-PGR-2025A', responsable:'Marina Aguayo', fecha:'03/02/2025',
+        marca:'Lenovo', modelo:'ThinkPad E14', valor:1680.00, proveedor:'Lenovo Ecuador', notas:'Asignado a profesora visitante.'
+      },
+      {
+        nombre:'Tablet Sala Docentes', tipo:'Tablet', ubicacion:'Bloque B — Sala Docentes', estado:'Activo',
+        serie:'TB-1004-RV', responsable:'Marcelo Tapia', fecha:'13/06/2025',
+        marca:'Samsung', modelo:'Galaxy Tab A8', valor:425.00, proveedor:'DataZone', notas:'Tablet para registro digital.'
+      },
+      {
+        nombre:'Servidor Central', tipo:'Servidor', ubicacion:'DataCenter', estado:'Activo',
+        serie:'SRV-CNTRL-004', responsable:'Ing. Gonzalo Vélez', fecha:'08/01/2025',
+        marca:'HPE', modelo:'ProLiant DL380', valor:6500.00, proveedor:'HPE Quito', notas:'Servidor con backup diario.'
+      },
+      {
+        nombre:'Router Principal', tipo:'Router', ubicacion:'Oficina de IT', estado:'Activo',
+        serie:'RT-PR-2025B', responsable:'Sofía Martínez', fecha:'15/03/2025',
+        marca:'Cisco', modelo:'Catalyst 9200', valor:1200.00, proveedor:'Cisco Store', notas:'Configurado para red interna.'
+      }
+    ];
+    localStorage.setItem('inventarioULEAM', JSON.stringify(inventario));
+  }
+  return inventario;
+}
+
+// Guardar inventario en localStorage
+function guardarInventarioLocal(inventario) {
+  localStorage.setItem('inventarioULEAM', JSON.stringify(inventario));
+}
+
+// Cargar y renderizar tabla
+function cargarInventario() {
+  const inventario = inicializarInventario();
+  renderTabla(inventario);
+  actualizarContadores(inventario);
+  cargarUbicaciones(inventario);
+}
+
+function renderTabla(inventario) {
   let body = '';
-  for(let eq of inventario){
+  for(let i = 0; i < inventario.length; i++){
+    const eq = inventario[i];
     body += `<tr>
-      <td>${eq.nombre}</td>
+      <td><strong>${eq.nombre}</strong></td>
       <td>${eq.tipo}</td>
       <td>${eq.ubicacion}</td>
       <td>${badgeEstado(eq.estado)}</td>
       <td>${eq.serie}</td>
-      <td>
-        ${eq.avatar ? `<img src="${eq.avatar}" class="avatar-small" alt="avatar">` : ''}
-        ${eq.responsable}
-      </td>
+      <td>${eq.responsable}</td>
       <td>${eq.fecha}</td>
+      <td>
+        <button class="btn-eliminar" onclick="eliminarEquipo(${i})">🗑️ Eliminar</button>
+      </td>
     </tr>`;
   }
-  document.getElementById('inventarioBody').innerHTML = body;
+  document.getElementById('inventarioBody').innerHTML = body || '<tr><td colspan="8" style="text-align:center; padding:20px; color:#888;">No hay equipos registrados</td></tr>';
 }
+
 function badgeEstado(est) {
   if(/activo/i.test(est)) return `<span class="badge-gris">${est}</span>`;
   if(/repar/i.test(est)) return `<span class="badge-repar">${est}</span>`;
   if(/baja/i.test(est)) return `<span class="badge-baja">${est}</span>`;
   return `<span class="badge-blue">${est}</span>`;
 }
-// Filtros, acciones demo
-function filtrosReset() {
-  document.getElementById('buscar').value='';
-  document.getElementById('tipoFiltro').selectedIndex=0;
-  document.getElementById('ubicacionFiltro').selectedIndex=0;
-  document.getElementById('estadoFiltro').selectedIndex=0;
-  document.getElementById('fechaFiltro').value='';
-  renderTabla();
+
+function actualizarContadores(inventario) {
+  const total = inventario.length;
+  const activos = inventario.filter(e => /activo/i.test(e.estado)).length;
+  const reparacion = inventario.filter(e => /repar/i.test(e.estado)).length;
+  const baja = inventario.filter(e => /baja/i.test(e.estado)).length;
+  
+  document.getElementById('contadorTotal').textContent = total;
+  document.getElementById('contadorActivos').textContent = activos;
+  document.getElementById('contadorReparacion').textContent = reparacion;
+  document.getElementById('contadorBaja').textContent = baja;
 }
-function cargarDatosDemo() { renderTabla(); }
-function nuevoEquipo(){
-  document.getElementById('formEquipo').reset();
-  window.scrollTo(0,document.body.scrollHeight);
-}
-function guardarEquipo(e){
-  e.preventDefault();
-  inventario.push({
-    nombre:document.getElementById('nombreEquipo').value,
-    tipo:document.getElementById('tipoEquipo').value,
-    ubicacion:document.getElementById('ubicacionEquipo').value,
-    estado:document.getElementById('estadoEquipo').value,
-    serie:document.getElementById('serieEquipo').value,
-    responsable:document.getElementById('responsableEquipo').value,
-    fecha: new Date().toLocaleDateString("es-EC"),
-    avatar:""
+
+function cargarUbicaciones(inventario) {
+  const ubicaciones = [...new Set(inventario.map(e => e.ubicacion))].sort();
+  const select = document.getElementById('ubicacionFiltro');
+  select.innerHTML = '<option value="">Ubicación</option>';
+  ubicaciones.forEach(ub => {
+    select.innerHTML += `<option>${ub}</option>`;
   });
-  renderTabla(); e.target.reset();
 }
-function formLimpiar(){
+
+// Guardar nuevo equipo
+function guardarEquipo(e) {
+  e.preventDefault();
+  
+  const inventario = inicializarInventario();
+  const nuevoEquipo = {
+    nombre: document.getElementById('nombreEquipo').value,
+    tipo: document.getElementById('tipoEquipo').value,
+    ubicacion: document.getElementById('ubicacionEquipo').value,
+    estado: document.getElementById('estadoEquipo').value,
+    serie: document.getElementById('serieEquipo').value,
+    responsable: document.getElementById('responsableEquipo').value,
+    fecha: new Date().toLocaleDateString("es-EC"),
+    marca: document.getElementById('marcaEquipo').value || '-',
+    modelo: document.getElementById('modeloEquipo').value || '-',
+    valor: parseFloat(document.getElementById('valorEquipo').value) || 0,
+    proveedor: document.getElementById('proveedorEquipo').value || '-',
+    notas: document.getElementById('notaEquipo').value || '-'
+  };
+  
+  inventario.push(nuevoEquipo);
+  guardarInventarioLocal(inventario);
+  cargarInventario();
+  e.target.reset();
+  alert('✅ Equipo guardado correctamente y sincronizado en todas las vistas');
+  window.scrollTo(0, 0);
+}
+
+// Eliminar equipo
+function eliminarEquipo(index) {
+  if(confirm('¿Está seguro de eliminar este equipo del inventario?')) {
+    const inventario = inicializarInventario();
+    inventario.splice(index, 1);
+    guardarInventarioLocal(inventario);
+    cargarInventario();
+    alert('✅ Equipo eliminado correctamente');
+  }
+}
+
+// Filtros
+function filtrosReset() {
+  document.getElementById('buscar').value = '';
+  document.getElementById('tipoFiltro').selectedIndex = 0;
+  document.getElementById('ubicacionFiltro').selectedIndex = 0;
+  document.getElementById('estadoFiltro').selectedIndex = 0;
+  document.getElementById('fechaFiltro').value = '';
+  cargarInventario();
+}
+
+function nuevoEquipo() {
+  document.getElementById('formEquipo').reset();
+  window.scrollTo(0, document.body.scrollHeight);
+}
+
+function formLimpiar() {
   document.getElementById('formEquipo').reset();
 }
-window.onload=renderTabla;
+
+function cerrarSesion() {
+  if(confirm('¿Desea cerrar sesión?')) {
+    sessionStorage.clear();
+    window.location.href = 'Seleccion_usuario.html';
+  }
+}
+
+function cambiarTab(tab) {
+      document.querySelectorAll('.tabs-nav button').forEach(btn => btn.classList.remove('activo'));
+      event.target.classList.add('activo');
+      
+      document.getElementById('tab-inventario').style.display = 'none';
+      document.getElementById('tab-ubicaciones').style.display = 'none';
+      document.getElementById('tab-estadisticas').style.display = 'none';
+      document.getElementById('tab-mantenimientos').style.display = 'none';
+      
+      document.getElementById('tab-' + tab).style.display = 'block';
+    }
+
+// Cargar al inicio
+window.onload = cargarInventario;
 </script>
 </body>
 </html>

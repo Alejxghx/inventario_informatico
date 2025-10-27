@@ -103,22 +103,38 @@ document.getElementById("rol-nombre").textContent = permisosRol[rol]?.breve || r
 document.getElementById("rol-resumido").textContent = permisosRol[rol]?.breve || rol;
 document.getElementById("rol-permisos").innerHTML = permisosRol[rol]?.permisos || "";
 
-/* Validación sencilla de login: guarda sesión y almacena el rol del usuario.
-   El rol se obtiene desde la query string (selección previa). */
+/* --- CAMBIO: mapeo rol -> página destino --- */
+const roleToPage = {
+  "Administrador": "vista_administrador.html",
+  "Encargado de Inventario": "vista_inventario.html",
+  "Técnico de Mantenimiento": "vista_mantenimiento.html",
+  "Decanos, Directores y Profesores": "vista usuarios.html"
+};
+
+/* Credenciales por rol (usuario / contraseña) */
+const credentialsByRole = {
+  "Administrador": { user: "admin", password: "1234" },
+  "Encargado de Inventario": { user: "inventario", password: "1234" },
+  "Técnico de Mantenimiento": { user: "mantenimiento", password: "1234" },
+  "Decanos, Directores y Profesores": { user: "usuario", password: "1234" }
+};
+
+/* Validación de login específica por rol */
 document.getElementById('loginForm').addEventListener('submit', (e) => {
   e.preventDefault();
   const usuario = document.getElementById('usuario').value.trim();
   const clave = document.getElementById('clave').value.trim();
 
-  // credenciales de ejemplo (mantener como estaba)
-  if (usuario === 'admin' && clave === '1234') {
-    // marca sesión válida
+  const esperado = credentialsByRole[rol];
+  if (esperado && usuario === esperado.user && clave === esperado.password) {
+    // sesión válida
     sessionStorage.setItem('accesoInventario', 'ok');
-    // guarda rol seleccionado para usar en las vistas
     sessionStorage.setItem('rolUsuario', rol);
-    // redirige a la vista principal (cada vista hará su comprobación de rol)
-    window.location.href = 'vista_inventario.html';
+    // redirigir según rol
+    const destino = roleToPage[rol] || 'vista_inventario.html';
+    window.location.href = destino;
   } else {
+    // credenciales inválidas: mostrar error
     document.getElementById('error-msg').style.display = 'block';
   }
 });

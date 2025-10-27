@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Consulta de Inventario - ULEAM</title>
+    <link rel="stylesheet" href="styles_web.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+  <div class="barra_principal">
+    <h1 class="titulo-principal">Consulta de Inventario</h1>
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <span style="color: #666; font-weight: 500;">Facultad de Informática</span>
+      <button class="btn-rojo" onclick="cerrarSesion()">Cerrar Sesión</button>
+      <img src="https://www.uleam.edu.ec/wp-content/uploads/2012/09/LOGO-ULEAM-VERTICAL.png" class="logo-uleam" style="height: 70px;">
+    </div>
+  </div>
+
+  <div style="max-width: 1300px; margin: auto; padding: 20px;">
+    
+    <!-- Resumen ejecutivo -->
+    <div class="resumen-box">
+      <h2>📊 Resumen Ejecutivo</h2>
+      <p>Su facultad cuenta con <strong>156 equipos registrados</strong> distribuidos en <strong>12 ubicaciones</strong>. El <strong>92% están operativos</strong> y hay <strong>3 mantenimientos programados</strong> para esta semana.</p>
+    </div>
+
+    <!-- Dashboard de estadísticas -->
+    <div class="dashboard-container">
+      <div class="stat-card">
+        <h3>Total de Equipos</h3>
+        <div class="numero-grande">156</div>
+        <div class="descripcion">En toda la facultad</div>
+      </div>
+      <div class="stat-card azul">
+        <h3>Equipos Activos</h3>
+        <div class="numero-grande">143</div>
+        <div class="descripcion">92% operativos</div>
+      </div>
+      <div class="stat-card amarillo">
+        <h3>En Reparación</h3>
+        <div class="numero-grande">8</div>
+        <div class="descripcion">5% del total</div>
+      </div>
+      <div class="stat-card rojo">
+        <h3>Dados de Baja</h3>
+        <div class="numero-grande">5</div>
+        <div class="descripcion">3% del total</div>
+      </div>
+    </div>
+
+    <!-- Navegación por pestañas -->
+    <div class="tabs-nav">
+      <button class="activo" onclick="cambiarTab('inventario')">Inventario Completo</button>
+      <button onclick="cambiarTab('ubicaciones')">Por Ubicaciones</button>
+      <button onclick="cambiarTab('estadisticas')">Estadísticas</button>
+      <button onclick="cambiarTab('mantenimientos')">Historial Mantenimiento</button>
+    </div>
+
+    <!-- TAB 1: Inventario Completo -->
+    <div id="tab-inventario">
+      <div class="seccion">
+        <h2>Inventario General</h2>
+        
+        <div class="filtros-investigacion">
+          <select id="filtroFacultad">
+            <option>Facultad de Informática</option>
+            <option>Facultad de Administración</option>
+            <option>Facultad de Ingeniería</option>
+          </select>
+          <select id="filtroUbicacion">
+            <option value="">Todas las ubicaciones</option>
+            <option>Bloque A — Lab 3</option>
+            <option>Bloque B — Admin</option>
+            <option>Aula Magna</option>
+            <option>Biblioteca Central</option>
+            <option>DataCenter</option>
+          </select>
+          <select id="filtroTipo">
+            <option value="">Todos los tipos</option>
+            <option>Computador</option>
+            <option>Proyector</option>
+            <option>Impresora</option>
+            <option>Servidor</option>
+            <option>Tablet</option>
+          </select>
+          <select id="filtroEstado">
+            <option value="">Todos los estados</option>
+            <option>Activo</option>
+            <option>En reparación</option>
+            <option>Dado de baja</option>
+          </select>
+          <input type="text" id="buscarEquipo" placeholder="Buscar equipo...">
+          <button class="btn-exportar" onclick="exportarExcel()">📥 Exportar Excel</button>
+          <button class="btn-exportar" style="background: #d83919;" onclick="exportarPDF()">📄 Exportar PDF</button>
+        </div>
+
+        <table class="tabla-consulta">
+          <thead>
+            <tr>
+              <th>Equipo</th>
+              <th>Tipo</th>
+              <th>Ubicación</th>
+              <th>Estado</th>
+              <th>N.º de Serie</th>
+              <th>Responsable</th>
+              <th>Valor</th>
+              <th>Último Mantenimiento</th>
+            </tr>
+          </thead>
+          <tbody id="tablaInventarioBody">
+            <tr>
+              <td><strong>PC Docencia Lab 12</strong></td>
+              <td>Computador</td>
+              <td>Bloque A — Lab 3</td>
+              <td><span class="badge-estado activo">Activo</span></td>
+              <td>SER-PC-009812</td>
+              <td>Ana Pérez</td>
+              <td>$1,450.00</td>
+              <td>10/09/2025</td>
+            </tr>
+            <tr>
+              <td><strong>Proyector Aula Magna</strong></td>
+              <td>Proyector</td>
+              <td>Aula Magna</td>
+              <td><span class="badge-estado reparacion">En reparación</span></td>
+              <td>PRJ-77231</td>
+              <td>Carlos Ruiz</td>
+              <td>$730.00</td>
+              <td>05/10/2025</td>
+            </tr>
+            <tr>
+              <td><strong>Impresora Adm. 2º piso</strong></td>
+              <td>Impresora</td>
+              <td>Bloque B — Admin</td>
+              <td><span class="badge-estado activo">Activo</span></td>
+              <td>HP-12A-5542</td>
+              <td>Diana Soto</td>
+              <td>$890.00</td>
+              <td>22/08/2025</td>
+            </tr>
+            <tr>
+              <td><strong>UPS Biblioteca</strong></td>
+              <td>UPS</td>
+              <td>Biblioteca Central</td>
+              <td><span class="badge-estado baja">Dado de baja</span></td>
+              <td>UPS-1500-AX9</td>
+              <td>Luis Cano</td>
+              <td>$560.00</td>
+              <td>01/07/2025</td>
+            </tr>
+            <tr>
+              <td><strong>Laptop Posgrado</strong></td>
+              <td>Computador</td>
+              <td>Bloque C — Posgrado</td>
+              <td><span class="badge-estado activo">Activo</span></td>
+              <td>LT-PGR-2025A</td>
+              <td>Marina Aguayo</td>
+              <td>$1,680.00</td>
+              <td>03/02/2025</td>
+            </tr>
+            <tr>
+              <td><strong>Tablet Sala Docentes</strong></td>
+              <td>Tablet</td>
+              <td>Bloque B — Sala Docentes</td>
+              <td><span class="badge-estado activo">Activo</span></td>
+              <td>TB-1004-RV</td>
+              <td>Marcelo Tapia</td>
+              <td>$425.00</td>
+              <td>13/06/2025</td>
+            </tr>
+            <tr>
+              <td><strong>Servidor Central</strong></td>
+              <td>Servidor</td>
+              <td>DataCenter</td>
+              <td><span class="badge-estado activo">Activo</span></td>
+              <td>SRV-CNTRL-004</td>
+              <td>Ing. Gonzalo Vélez</td>
+              <td>$6,500.00</td>
+              <td>08/01/2025</td>
+            </tr>
+            <tr>
+              <td><strong>Router Principal</strong></td>
+              <td>Router</td>
+              <td>Oficina de IT</td>
+              <td><span class="badge-estado activo">Activo</span></td>
+              <td>RT-PR-2025B</td>
+              <td>Sofía Martínez</td>
+              <td>$1,200.00</td>
+              <td>15/03/2025</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 2: Por Ubicaciones -->
+    <div id="tab-ubicaciones" style="display: none;">
+      <div class="seccion">
+        <h2>Equipos por Ubicación</h2>
+        <div class="ubicacion-grid">
+          <div class="ubicacion-card">
+            <h4>📍 Bloque A — Lab 3</h4>
+            <div class="info-line">
+              <strong>Total equipos:</strong>
+              <span>24</span>
+            </div>
+            <div class="info-line">
+              <strong>Computadores:</strong>
+              <span>20</span>
+            </div>
+            <div class="info-line">
+              <strong>Proyectores:</strong>
+              <span>2</span>
+            </div>
+            <div class="info-line">
+              <strong>Otros:</strong>
+              <span>2</span>
+            </div>
+            <div class="info-line">
+              <strong>Estado:</strong>
+              <span class="badge-estado activo">23 Activos</span>
+            </div>
+          </div>
+
+          <div class="ubicacion-card">
+            <h4>📍 Bloque B — Admin</h4>
+            <div class="info-line">
+              <strong>Total equipos:</strong>
+              <span>18</span>
+            </div>
+            <div class="info-line">
+              <strong>Computadores:</strong>
+              <span>12</span>
+            </div>
+            <div class="info-line">
+              <strong>Impresoras:</strong>
+              <span>4</span>
+            </div>
+            <div class="info-line">
+              <strong>Otros:</strong>
+              <span>2</span>
+            </div>
+            <div class="info-line">
+              <strong>Estado:</strong>
+              <span class="badge-estado activo">18 Activos</span>
+            </div>
+          </div>
+
+          <div class="ubicacion-card">
+            <h4>📍 Aula Magna</h4>
+            <div class="info-line">
+              <strong>Total equipos:</strong>
+              <span>8</span>
+            </div>
+            <div class="info-line">
+              <strong>Proyectores:</strong>
+              <span>3</span>
+            </div>
+            <div class="info-line">
+              <strong>Audio:</strong>
+              <span>5</span>
+            </div>
+            <div class="info-line">
+              <strong>Estado:</strong>
+              <span class="badge-estado reparacion">1 En reparación</span>
+            </div>
+          </div>
+
+          <div class="ubicacion-card">
+            <h4>📍 Biblioteca Central</h4>
+            <div class="info-line">
+              <strong>Total equipos:</strong>
+              <span>32</span>
+            </div>
+            <div class="info-line">
+              <strong>Computadores:</strong>
+              <span>28</span>
+            </div>
+            <div class="info-line">
+              <strong>Impresoras:</strong>
+              <span>2</span>
+            </div>
+            <div class="info-line">
+              <strong>UPS:</strong>
+              <span>2</span>
+            </div>
+            <div class="info-line">
+              <strong>Estado:</strong>
+              <span class="badge-estado activo">30 Activos</span>
+            </div>
+          </div>
+
+          <div class="ubicacion-card">
+            <h4>📍 DataCenter</h4>
+            <div class="info-line">
+              <strong>Total equipos:</strong>
+              <span>12</span>
+            </div>
+            <div class="info-line">
+              <strong>Servidores:</strong>
+              <span>8</span>
+            </div>
+            <div class="info-line">
+              <strong>Routers:</strong>
+              <span>4</span>
+            </div>
+            <div class="info-line">
+              <strong>Estado:</strong>
+              <span class="badge-estado activo">12 Activos</span>
+            </div>
+          </div>
+
+          <div class="ubicacion-card">
+            <h4>📍 Bloque C — Posgrado</h4>
+            <div class="info-line">
+              <strong>Total equipos:</strong>
+              <span>15</span>
+            </div>
+            <div class="info-line">
+              <strong>Laptops:</strong>
+              <span>10</span>
+            </div>
+            <div class="info-line">
+              <strong>Proyectores:</strong>
+              <span>3</span>
+            </div>
+            <div class="info-line">
+              <strong>Otros:</strong>
+              <span>2</span>
+            </div>
+            <div class="info-line">
+              <strong>Estado:</strong>
+              <span class="badge-estado activo">15 Activos</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: Estadísticas -->
+    <div id="tab-estadisticas" style="display: none;">
+      <div class="grafico-container">
+        <h2>Distribución de Equipos por Tipo</h2>
+        <div class="grafico-barras">
+          <div class="barra">
+            <div class="barra-visual" style="height: 85%;">
+              <div class="barra-valor">68</div>
+            </div>
+            <div class="barra-label">Computadores</div>
+          </div>
+          <div class="barra">
+            <div class="barra-visual" style="height: 45%; background: linear-gradient(to top, #3477f7, #5a95f9);">
+              <div class="barra-valor">32</div>
+            </div>
+            <div class="barra-label">Proyectores</div>
+          </div>
+          <div class="barra">
+            <div class="barra-visual" style="height: 35%; background: linear-gradient(to top, #f39c12, #f5b041);">
+              <div class="barra-valor">18</div>
+            </div>
+            <div class="barra-label">Impresoras</div>
+          </div>
+          <div class="barra">
+            <div class="barra-visual" style="height: 60%; background: linear-gradient(to top, #9b59b6, #bb8fce);">
+              <div class="barra-valor">24</div>
+            </div>
+            <div class="barra-label">Tablets/Laptops</div>
+          </div>
+          <div class="barra">
+            <div class="barra-visual" style="height: 25%; background: linear-gradient(to top, #e74c3c, #ec7063);">
+              <div class="barra-valor">14</div>
+            </div>
+            <div class="barra-label">Otros</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="seccion">
+        <h2>Análisis de Inversión</h2>
+        <div class="dashboard-container">
+          <div class="stat-card azul">
+            <h3>Inversión Total</h3>
+            <div class="numero-grande">$187,560</div>
+            <div class="descripcion">En equipos activos</div>
+          </div>
+          <div class="stat-card">
+            <h3>Promedio por Equipo</h3>
+            <div class="numero-grande">$1,202</div>
+            <div class="descripcion">Valor medio</div>
+          </div>
+          <div class="stat-card amarillo">
+            <h3>Mantenimiento Anual</h3>
+            <div class="numero-grande">$12,450</div>
+            <div class="descripcion">Estimado 2025</div>
+          </div>
+          <div class="stat-card rojo">
+            <h3>Equipos a Renovar</h3>
+            <div class="numero-grande">18</div>
+            <div class="descripcion">Próximos 6 meses</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: Historial de Mantenimiento -->
+    <div id="tab-mantenimientos" style="display: none;">
+      <div class="seccion">
+        <h2>Historial de Mantenimientos</h2>
+        <div class="mantenimiento-timeline">
+          <div class="timeline-item">
+            <div class="timeline-icono">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+            </div>
+            <div class="timeline-contenido">
+              <div class="timeline-fecha">24 Octubre 2025</div>
+              <div class="timeline-titulo">Mantenimiento Preventivo - PC Docencia Lab 12</div>
+              <div class="timeline-detalle">Actualización de sistema operativo y limpieza de hardware. Técnico: Carlos Ruiz</div>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-icono">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            </div>
+            <div class="timeline-contenido">
+              <div class="timeline-fecha">22 Octubre 2025</div>
+              <div class="timeline-titulo">Reparación Completada - Impresora Adm. 2º piso</div>
+              <div class="timeline-detalle">Atasco de papel resuelto. Limpieza y calibración de rodillos. Técnico: María López</div>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-icono">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+            </div>
+            <div class="timeline-contenido">
+              <div class="timeline-fecha">15 Octubre 2025</div>
+              <div class="timeline-titulo">Instalación de Nuevo Equipo - Router Principal</div>
+              <div class="timeline-detalle">Router Cisco Catalyst 9200 instalado y configurado. Técnico: Sofía Martínez</div>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-icono">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+            </div>
+            <div class="timeline-contenido">
+              <div class="timeline-fecha">10 Octubre 2025</div>
+              <div class="timeline-titulo">Mantenimiento Correctivo - Proyector Aula Magna</div>
+              <div class="timeline-detalle">Reemplazo de lámpara defectuosa. Proyector operativo nuevamente. Técnico: Carlos Ruiz</div>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-icono">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            </div>
+            <div class="timeline-contenido">
+              <div class="timeline-fecha">05 Octubre 2025</div>
+              <div class="timeline-titulo">Actualización de Software - Servidores DataCenter</div>
+              <div class="timeline-detalle">Actualización de seguridad y parches del sistema. Sin interrupciones. Técnico: Gonzalo Vélez</div>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-icono">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+            </div>
+            <div class="timeline-contenido">
+              <div class="timeline-fecha">28 Septiembre 2025</div>
+              <div class="timeline-titulo">Mantenimiento Preventivo Masivo - Laboratorios</div>
+              <div class="timeline-detalle">Limpieza y actualización de 45 computadores en laboratorios. Equipo técnico completo</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function cambiarTab(tab) {
+      // Remover clase activa de todos los botones
+      document.querySelectorAll('.tabs-nav button').forEach(btn => btn.classList.remove('activo'));
+      event.target.classList.add('activo');
+      
+      // Ocultar todos los tabs
+      document.getElementById('tab-inventario').style.display = 'none';
+      document.getElementById('tab-ubicaciones').style.display = 'none';
+      document.getElementById('tab-estadisticas').style.display = 'none';
+      document.getElementById('tab-mantenimientos').style.display = 'none';
+      
+      // Mostrar el tab seleccionado
+      document.getElementById('tab-' + tab).style.display = 'block';
+    }
+
+    function exportarExcel() {
+      alert('📥 Exportando a Excel...\n\nSe descargará un archivo con todos los equipos y sus detalles.');
+      // Aquí iría la lógica real de exportación
+    }
+
+    function exportarPDF() {
+      alert('📄 Generando reporte PDF...\n\nSe creará un documento con el inventario completo.');
+      // Aquí iría la lógica real de exportación a PDF
+    }
+
+    function cerrarSesion() {
+      if(confirm('¿Desea cerrar sesión?')) {
+        sessionStorage.clear();
+        window.location.href = 'Seleccion_usuario.html';
+      }
+    }
+
+    // Cargar datos del CSV si existe
+    window.onload = function() {
+      console.log('Vista de consulta cargada correctamente');
+    }
+  </script>
+</body>
+</html>

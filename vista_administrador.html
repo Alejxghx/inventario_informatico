@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel Administrador - ULEAM</title>
+    <link rel="stylesheet" href="styles_web.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+  <div class="barra_principal">
+    <h1 class="titulo-principal">Panel de Administrador</h1>
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <button class="btn-rojo" onclick="cerrarSesion()">Cerrar Sesión</button>
+      <img src="https://www.uleam.edu.ec/wp-content/uploads/2012/09/LOGO-ULEAM-VERTICAL.png" class="logo-uleam" style="height: 70px;">
+    </div>
+  </div>
+
+  <div style="max-width: 1200px; margin: auto; padding: 20px;">
+    
+    <!-- Estadísticas generales -->
+    <div class="dashboard-grid">
+      <div class="card-stat verde">
+        <h3>Usuarios Activos</h3>
+        <div class="numero" id="totalUsuarios">24</div>
+        <div class="detalle">Total en el sistema</div>
+      </div>
+      <div class="card-stat">
+        <h3>Equipos Registrados</h3>
+        <div class="numero" id="totalEquipos">156</div>
+        <div class="detalle">En inventario</div>
+      </div>
+      <div class="card-stat rojo">
+        <h3>Equipos en Reparación</h3>
+        <div class="numero" id="equiposRepar">8</div>
+        <div class="detalle">Requieren atención</div>
+      </div>
+      <div class="card-stat verde">
+        <h3>Órdenes Completadas</h3>
+        <div class="numero" id="ordenesComp">142</div>
+        <div class="detalle">Este mes</div>
+      </div>
+    </div>
+
+    <!-- Navegación por pestañas -->
+    <div class="nav-tabs">
+      <button class="activo" onclick="cambiarTab('usuarios')">Gestión de Usuarios</button>
+      <button onclick="cambiarTab('permisos')">Permisos y Roles</button>
+      <button onclick="cambiarTab('auditoria')">Auditoría</button>
+      <button onclick="cambiarTab('config')">Configuración</button>
+    </div>
+
+    <!-- Contenido Usuarios -->
+    <div class="seccion" id="tab-usuarios">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h2>Usuarios del Sistema</h2>
+        <button class="btn-principal" onclick="abrirModal('nuevo')">+ Nuevo Usuario</button>
+      </div>
+      <table class="tabla-admin">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Usuario</th>
+            <th>Rol</th>
+            <th>Estado</th>
+            <th>Último acceso</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tablaUsuarios">
+          <tr>
+            <td>Ana Pérez Gómez</td>
+            <td>ana.perez</td>
+            <td>Encargado de Inventario</td>
+            <td><span class="badge activo">Activo</span></td>
+            <td>25/10/2025 14:30</td>
+            <td>
+              <button class="btn-accion editar" onclick="editarUsuario(0)">Editar</button>
+              <button class="btn-accion eliminar" onclick="eliminarUsuario(0)">Eliminar</button>
+            </td>
+          </tr>
+          <tr>
+            <td>Carlos Ruiz Mendoza</td>
+            <td>carlos.ruiz</td>
+            <td>Técnico de Mantenimiento</td>
+            <td><span class="badge activo">Activo</span></td>
+            <td>26/10/2025 09:15</td>
+            <td>
+              <button class="btn-accion editar" onclick="editarUsuario(1)">Editar</button>
+              <button class="btn-accion eliminar" onclick="eliminarUsuario(1)">Eliminar</button>
+            </td>
+          </tr>
+          <tr>
+            <td>Diana Soto Velasco</td>
+            <td>diana.soto</td>
+            <td>Administrador</td>
+            <td><span class="badge activo">Activo</span></td>
+            <td>26/10/2025 10:00</td>
+            <td>
+              <button class="btn-accion editar" onclick="editarUsuario(2)">Editar</button>
+              <button class="btn-accion eliminar" onclick="eliminarUsuario(2)">Eliminar</button>
+            </td>
+          </tr>
+          <tr>
+            <td>Luis Cano Torres</td>
+            <td>luis.cano</td>
+            <td>Decano</td>
+            <td><span class="badge inactivo">Inactivo</span></td>
+            <td>20/10/2025 16:45</td>
+            <td>
+              <button class="btn-accion editar" onclick="editarUsuario(3)">Editar</button>
+              <button class="btn-accion eliminar" onclick="eliminarUsuario(3)">Eliminar</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Contenido Permisos -->
+    <div class="seccion" id="tab-permisos" style="display: none;">
+      <h2>Gestión de Permisos y Roles</h2>
+      <p style="color: #666; margin-bottom: 20px;">Configure los permisos para cada rol del sistema.</p>
+      <table class="tabla-admin">
+        <thead>
+          <tr>
+            <th>Rol</th>
+            <th>Usuarios</th>
+            <th>Inventario</th>
+            <th>Mantenimiento</th>
+            <th>Reportes</th>
+            <th>Configuración</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Administrador</strong></td>
+            <td><span class="badge activo">Total</span></td>
+            <td><span class="badge activo">Total</span></td>
+            <td><span class="badge activo">Total</span></td>
+            <td><span class="badge activo">Total</span></td>
+            <td><span class="badge activo">Total</span></td>
+          </tr>
+          <tr>
+            <td><strong>Encargado de Inventario</strong></td>
+            <td><span class="badge inactivo">No</span></td>
+            <td><span class="badge activo">Total</span></td>
+            <td><span class="badge activo">Lectura</span></td>
+            <td><span class="badge activo">Inventario</span></td>
+            <td><span class="badge inactivo">No</span></td>
+          </tr>
+          <tr>
+            <td><strong>Técnico de Mantenimiento</strong></td>
+            <td><span class="badge inactivo">No</span></td>
+            <td><span class="badge activo">Lectura</span></td>
+            <td><span class="badge activo">Total</span></td>
+            <td><span class="badge activo">Mantenimiento</span></td>
+            <td><span class="badge inactivo">No</span></td>
+          </tr>
+          <tr>
+            <td><strong>Decanos/Directores</strong></td>
+            <td><span class="badge inactivo">No</span></td>
+            <td><span class="badge activo">Lectura</span></td>
+            <td><span class="badge activo">Lectura</span></td>
+            <td><span class="badge activo">Total</span></td>
+            <td><span class="badge inactivo">No</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Contenido Auditoría -->
+    <div class="seccion" id="tab-auditoria" style="display: none;">
+      <h2>Registro de Auditoría</h2>
+      <p style="color: #666; margin-bottom: 20px;">Historial de acciones realizadas en el sistema.</p>
+      <table class="tabla-admin">
+        <thead>
+          <tr>
+            <th>Fecha/Hora</th>
+            <th>Usuario</th>
+            <th>Acción</th>
+            <th>Módulo</th>
+            <th>Detalles</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>26/10/2025 10:15</td>
+            <td>ana.perez</td>
+            <td>Creó equipo</td>
+            <td>Inventario</td>
+            <td>PC Docencia Lab 15</td>
+          </tr>
+          <tr>
+            <td>26/10/2025 09:45</td>
+            <td>carlos.ruiz</td>
+            <td>Actualizó orden</td>
+            <td>Mantenimiento</td>
+            <td>Orden #MT-2025-089</td>
+          </tr>
+          <tr>
+            <td>25/10/2025 16:30</td>
+            <td>diana.soto</td>
+            <td>Modificó usuario</td>
+            <td>Usuarios</td>
+            <td>Cambió rol de luis.cano</td>
+          </tr>
+          <tr>
+            <td>25/10/2025 14:20</td>
+            <td>ana.perez</td>
+            <td>Generó reporte</td>
+            <td>Reportes</td>
+            <td>Inventario mensual</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Contenido Configuración -->
+    <div class="seccion" id="tab-config" style="display: none;">
+      <h2>Configuración del Sistema</h2>
+      <div style="max-width: 600px;">
+        <div class="form-grupo">
+          <label>Nombre de la Institución</label>
+          <input type="text" value="Universidad Laica Eloy Alfaro de Manabí">
+        </div>
+        <div class="form-grupo">
+          <label>Correo de Notificaciones</label>
+          <input type="email" value="notificaciones@uleam.edu.ec">
+        </div>
+        <div class="form-grupo">
+          <label>Días de Retención de Auditoría</label>
+          <input type="number" value="90">
+        </div>
+        <div class="form-grupo">
+          <label>Alertas Automáticas</label>
+          <select>
+            <option selected>Activadas</option>
+            <option>Desactivadas</option>
+          </select>
+        </div>
+        <div class="form-grupo">
+          <label>Frecuencia de Respaldo</label>
+          <select>
+            <option selected>Diario</option>
+            <option>Semanal</option>
+            <option>Mensual</option>
+          </select>
+        </div>
+        <button class="btn-principal">Guardar Configuración</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para crear/editar usuario -->
+  <div class="modal" id="modalUsuario">
+    <div class="modal-content">
+      <h2 id="modalTitulo">Nuevo Usuario</h2>
+      <form id="formUsuario" onsubmit="guardarUsuario(event)">
+        <div class="form-grupo">
+          <label>Nombre Completo</label>
+          <input type="text" id="nombreCompleto" required>
+        </div>
+        <div class="form-grupo">
+          <label>Usuario</label>
+          <input type="text" id="usuario" required>
+        </div>
+        <div class="form-grupo">
+          <label>Contraseña</label>
+          <input type="password" id="contrasena" required>
+        </div>
+        <div class="form-grupo">
+          <label>Rol</label>
+          <select id="rolUsuario" required>
+            <option value="">Seleccionar rol</option>
+            <option>Administrador</option>
+            <option>Encargado de Inventario</option>
+            <option>Técnico de Mantenimiento</option>
+            <option>Decanos, Directores y Profesores</option>
+          </select>
+        </div>
+        <div class="form-grupo">
+          <label>Estado</label>
+          <select id="estadoUsuario">
+            <option selected>Activo</option>
+            <option>Inactivo</option>
+          </select>
+        </div>
+        <div class="form-acciones">
+          <button type="button" class="btn-rojo" onclick="cerrarModal()">Cancelar</button>
+          <button type="submit" class="btn-verde">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function cambiarTab(tab) {
+      document.querySelectorAll('.nav-tabs button').forEach(btn => btn.classList.remove('activo'));
+      event.target.classList.add('activo');
+      
+      document.querySelectorAll('.seccion').forEach(sec => sec.style.display = 'none');
+      document.getElementById('tab-' + tab).style.display = 'block';
+    }
+
+    function abrirModal(tipo) {
+      document.getElementById('modalTitulo').textContent = tipo === 'nuevo' ? 'Nuevo Usuario' : 'Editar Usuario';
+      document.getElementById('formUsuario').reset();
+      document.getElementById('modalUsuario').classList.add('show');
+    }
+
+    function cerrarModal() {
+      document.getElementById('modalUsuario').classList.remove('show');
+    }
+
+    function editarUsuario(index) {
+      abrirModal('editar');
+    }
+
+    function eliminarUsuario(index) {
+      if(confirm('¿Está seguro de eliminar este usuario?')) {
+        alert('Usuario eliminado correctamente');
+      }
+    }
+
+    function guardarUsuario(e) {
+      e.preventDefault();
+      alert('Usuario guardado correctamente');
+      cerrarModal();
+    }
+
+    function cerrarSesion() {
+      if(confirm('¿Desea cerrar sesión?')) {
+        sessionStorage.clear();
+        window.location.href = 'Seleccion_usuario.html';
+      }
+    }
+
+    window.onclick = function(event) {
+      const modal = document.getElementById('modalUsuario');
+      if (event.target === modal) {
+        cerrarModal();
+      }
+    }
+  </script>
+</body>
+</html>
