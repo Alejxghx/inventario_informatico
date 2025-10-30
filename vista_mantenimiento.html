@@ -389,7 +389,7 @@
       </div>
     </div>
   </div>
-
+  <script src="sistema-global.js"></script>
   <script>
     // Obtener inventario del localStorage
     function obtenerInventario() {
@@ -440,16 +440,27 @@
     renderizarOrdenes();
     }
 
+     // Render simple: actualiza estadísticas y mantendrá los cards estáticos si desea
+    function renderizarOrdenes() {
+      // Por ahora solo actualiza contadores y el total de equipos.
+      actualizarEstadisticasMantenimiento();
+      }
+
     window.onload = function() {
     actualizarEstadisticasMantenimiento();
     const inventario = obtenerInventario();
     
     // Poblar select de equipos
-    const selectEquipos = document.getElementById('equipoOrden');
-    selectEquipos.innerHTML = '<option value="">Seleccionar equipo</option>' +
-        inventario.map(item => `<option>${item.nombre}</option>`).join('');
+      const selectEquipos = document.getElementById('equipoOrden');
+      if (inventario.length) {
+        selectEquipos.innerHTML = '<option value="">Seleccionar equipo</option>' +
+          inventario.map(item => `<option>${item.nombre}</option>`).join('');
+    }
+
+    renderizarOrdenes();
     };
 
+    
     function cambiarTab(tab) {
       document.querySelectorAll('.tabs-container button').forEach(btn => btn.classList.remove('activo'));
       event.target.classList.add('activo');
